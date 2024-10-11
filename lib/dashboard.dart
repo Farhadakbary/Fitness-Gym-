@@ -31,42 +31,30 @@ class _DashboardState extends State<Dashboard>
   int reRegisteredWithin10Days = 0;
   int notReRegistered = 0;
 
-  // For the second chart
   Map<String, int> durationCounts = {};
 
   @override
   void initState() {
     super.initState();
     fetchData();
-    // Removed: setupAnimatedIcons();
   }
 
-  // To handle route changes
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    // Subscribe to route changes if using RouteObserver
-    // Assuming you have set up a RouteObserver
-    // RouteObserverProvider.routeObserver.subscribe(this, ModalRoute.of(context)!);
   }
 
   @override
   void dispose() {
-    // RouteObserverProvider.routeObserver.unsubscribe(this);
-    // Removed: for (var controller in controllers) {
-    //   controller.dispose();
-    // }
     super.dispose();
   }
 
-  // Called when the current route has been popped back to
   @override
   void didPopNext() {
     super.didPopNext();
     fetchData(); // Refresh data
   }
 
-  // Fetch data from the database
   Future<void> fetchData() async {
     List<Person> persons = await _dbHelper.getAllPersons();
 
@@ -74,7 +62,6 @@ class _DashboardState extends State<Dashboard>
     int reRegistered = 0;
     int notReRegisteredCount = 0;
 
-    // Initialize durationCounts
     Map<String, int> tempDurationCounts = {
       'One Month': 0,
       'Three Months': 0,
@@ -90,16 +77,13 @@ class _DashboardState extends State<Dashboard>
         tempDurationCounts[person.duration] =
             tempDurationCounts[person.duration]! + 1;
       } else {
-        // Handle unexpected duration entries
         tempDurationCounts[person.duration] = 1;
       }
 
-      // Check re-registration within 10 days
       if (person.isExpiringWithin(10)) {
         reRegistered += 1;
       }
 
-      // Check if not re-registered
       if (person.hasExpired()) {
         notReRegisteredCount += 1;
       }
@@ -185,8 +169,17 @@ class _DashboardState extends State<Dashboard>
               splashColor: Colors.white24,
               onTap: () {
                 Navigator.push(context,
-                    MaterialPageRoute(builder: (context) => WorkoutPage()));
+                    MaterialPageRoute(builder: (context) => const WorkoutPage()));
               },
+            ),
+            ListTile(
+              leading: const Icon(Icons.report, color: Colors.black),
+              title:
+                  const Text('Reports', style: TextStyle(color: Colors.black)),
+              trailing:
+                  const Icon(Icons.navigate_next_rounded, color: Colors.black),
+              splashColor: Colors.white24,
+              onTap: () {},
             ),
             ListTile(
               leading: const Icon(Icons.settings, color: Colors.black),

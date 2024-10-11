@@ -337,7 +337,7 @@ class _WorkoutPageState extends State<WorkoutPage> {
           actions: [
             TextButton(
               onPressed: () {
-                Navigator.of(context).pop(); // بستن Dialog
+                Navigator.of(context).pop();
               },
               child: const Text('لغو'),
             ),
