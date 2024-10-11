@@ -8,7 +8,7 @@ class AboutPage extends StatelessWidget {
     return Scaffold(
       backgroundColor: Colors.yellow.shade100,
       appBar: AppBar(
-        title: const Text('درباره کلپ'),
+        title: const Text('About GYM'),
         backgroundColor: Colors.yellow,
       ),
       body: SingleChildScrollView(

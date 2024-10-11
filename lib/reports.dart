@@ -34,19 +34,19 @@ class _ReportPageState extends State<ReportPage> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             ReportButton(
-              title: 'Registered Members',
+              title: 'All Registered Members',
               color: Colors.yellow,
               onPressed: _showRegisteredMembers,
             ),
             const SizedBox(height: 20),
             ReportButton(
-              title: 'Expired Registrations',
+              title: 'The Expired Members',
               color: Colors.red,
               onPressed: _showExpiredRegistrations,
             ),
             const SizedBox(height: 20),
             ReportButton(
-              title: 'Expiring Registrations',
+              title: 'Is Expiring Members',
               color: Colors.orange,
               onPressed: _showExpiringRegistrations,
             ),

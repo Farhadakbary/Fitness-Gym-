@@ -1,3 +1,5 @@
+// WorkoutPage.dart
+
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
@@ -10,39 +12,41 @@ class WorkoutPage extends StatefulWidget {
 }
 
 class _WorkoutPageState extends State<WorkoutPage> {
+  // Initial exercises map with English category names
   Map<String, List<String>> exercises = {
-    'بازو': [
-      'تمرین دمبل',
-      'تمرین بارفیکس',
-      'تمرین جلو بازو',
-      'تمرین پشت بازو',
+    'Arms': [
+      'Dumbbell Exercise',
+      'Pull-Up Exercise',
+      'Bicep Exercise',
+      'Tricep Exercise',
     ],
-    'پا': [
-      'اسکوات',
-      'لانگز',
-      'پرس پا',
-      'کشش همسترینگ',
+    'Legs': [
+      'Squat',
+      'Lunges',
+      'Leg Press',
+      'Hamstring Stretch',
     ],
-    'سینه': [
-      'پرس سینه',
-      'پوش آپ',
-      'پرواز سینه با دمبل',
-      'کشش سینه',
+    'Chest': [
+      'Chest Press',
+      'Push-Up',
+      'Dumbbell Chest Fly',
+      'Chest Stretch',
     ],
-    'ماه اول': [
-      'پیاده‌روی سریع',
-      'دویدن ملایم',
-      'تمرینات کششی',
-      'یوگا پایه',
+    'First Month': [
+      'Brisk Walking',
+      'Light Jogging',
+      'Stretching Exercises',
+      'Basic Yoga',
     ],
-    'Second': ['پرس سینه', 'بالا سینه', 'جلو بازو', 'پشت بازو']
+    'Second': ['Chest Press', 'Upper Chest', 'Bicep', 'Tricep']
   };
 
+  // Map to store image paths for each category
   final Map<String, String> categoryImages = {
-    'بازو': 'images/arm.jpg',
-    'پا': 'images/leg.jpg',
-    'سینه': 'images/chest.jpg',
-    'ماه اول': 'images/beg.jpg',
+    'Arms': 'images/arm.jpg',
+    'Legs': 'images/leg.jpg',
+    'Chest': 'images/chest.jpg',
+    'First Month': 'images/beg.jpg',
     'Second': 'images/second.jpg'
   };
 
@@ -53,7 +57,7 @@ class _WorkoutPageState extends State<WorkoutPage> {
     return Scaffold(
       backgroundColor: Colors.yellow.shade100,
       appBar: AppBar(
-        title: const Text(' Training Programs'),
+        title: const Text('Training Programs'),
         backgroundColor: Colors.yellow,
       ),
       body: Padding(
@@ -117,7 +121,7 @@ class _WorkoutPageState extends State<WorkoutPage> {
         onPressed: () {
           _showAddCategoryDialog(context);
         },
-        tooltip: 'افزودن دسته‌بندی جدید',
+        tooltip: 'Add New Category',
         child: const Icon(
           Icons.add,
           color: Colors.white,
@@ -126,69 +130,211 @@ class _WorkoutPageState extends State<WorkoutPage> {
     );
   }
 
+  /// Displays the bottom sheet with exercises and options to add/remove
   void _showExercisesBottomSheet(BuildContext context, String category) {
     showModalBottomSheet(
       context: context,
       backgroundColor: Colors.white,
+      isScrollControlled: true, // To make full-screen dialogs if needed
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(25.0)),
       ),
       builder: (context) {
-        return Container(
-          padding: const EdgeInsets.all(20),
-          height: 400,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Center(
-                child: Container(
-                  width: 50,
-                  height: 5,
-                  decoration: BoxDecoration(
-                    color: Colors.grey.shade300,
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                ),
-              ),
-              const SizedBox(height: 20),
-              Text(
-                'تمرینات $category',
-                style: const TextStyle(
-                  fontSize: 22,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              const Divider(),
-              Expanded(
-                child: ListView.builder(
-                  itemCount: exercises[category]!.length,
-                  itemBuilder: (context, index) {
-                    String exercise = exercises[category]![index];
-                    return ListTile(
-                      leading:
-                          const Icon(Icons.check_circle, color: Colors.green),
-                      title: Text(
-                        exercise,
-                        style: const TextStyle(fontSize: 18),
+        return StatefulBuilder(
+          // To manage state within the bottom sheet
+          builder: (context, setState) {
+            return Container(
+              padding: const EdgeInsets.all(20),
+              height: MediaQuery.of(context).size.height * 0.6, // Adjust height as needed
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Drag Handle
+                  Center(
+                    child: Container(
+                      width: 50,
+                      height: 5,
+                      decoration: BoxDecoration(
+                        color: Colors.grey.shade300,
+                        borderRadius: BorderRadius.circular(10),
                       ),
-                      onTap: () {
-                        Navigator.pop(context);
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                              content: Text('تمرین "$exercise" انتخاب شد')),
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+                  // Title
+                  Text(
+                    'Exercises in $category',
+                    style: const TextStyle(
+                      fontSize: 22,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const Divider(),
+                  // List of Exercises
+                  Expanded(
+                    child: exercises[category]!.isEmpty
+                        ? const Center(
+                      child: Text(
+                        'No exercises added.',
+                        style: TextStyle(fontSize: 16, color: Colors.grey),
+                      ),
+                    )
+                        : ListView.builder(
+                      itemCount: exercises[category]!.length,
+                      itemBuilder: (context, index) {
+                        String exercise = exercises[category]![index];
+                        return ListTile(
+                          leading: const Icon(
+                            Icons.check_circle,
+                            color: Colors.green,
+                          ),
+                          title: Text(
+                            exercise,
+                            style: const TextStyle(fontSize: 18),
+                          ),
+                          trailing: IconButton(
+                            icon: const Icon(
+                              Icons.delete,
+                              color: Colors.red,
+                            ),
+                            onPressed: () {
+                              // Confirm deletion
+                              _confirmDeleteExercise(
+                                  context, category, index);
+                            },
+                          ),
+                          onTap: () {
+                            Navigator.pop(context);
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                  content: Text(
+                                      'Exercise "$exercise" selected')),
+                            );
+                          },
                         );
                       },
-                    );
-                  },
-                ),
+                    ),
+                  ),
+                  // Add Exercise Button
+                  ElevatedButton.icon(
+                    onPressed: () {
+                      _showAddExerciseDialog(context, category, setState);
+                    },
+                    icon: const Icon(Icons.add),
+                    label: const Text('Add Exercise'),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.yellow,
+                      foregroundColor: Colors.black,
+                      padding: const EdgeInsets.symmetric(
+                          vertical: 15.0, horizontal: 20.0),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10.0),
+                      ),
+                    ),
+                  ),
+                ],
               ),
-            ],
-          ),
+            );
+          },
         );
       },
     );
   }
 
+  /// Shows a dialog to confirm deletion of an exercise
+  void _confirmDeleteExercise(
+      BuildContext context, String category, int index) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text('Delete Exercise'),
+          content: const Text('Are you sure you want to delete this exercise?'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop(); // Close the dialog
+              },
+              child: const Text('Cancel'),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                setState(() {
+                  exercises[category]!.removeAt(index);
+                });
+                Navigator.of(context).pop(); // Close the dialog
+                Navigator.of(context).pop(); // Close the bottom sheet
+                _showExercisesBottomSheet(context, category); // Refresh bottom sheet
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('Exercise deleted')),
+                );
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.red,
+              ),
+              child: const Text('Delete'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  /// Shows a dialog to add a new exercise
+  void _showAddExerciseDialog(
+      BuildContext context, String category, Function setState) {
+    final TextEditingController exerciseController = TextEditingController();
+
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text('Add New Exercise'),
+          content: TextField(
+            controller: exerciseController,
+            decoration: const InputDecoration(
+              labelText: 'Exercise Name',
+              border: OutlineInputBorder(),
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop(); // Close the dialog
+              },
+              child: const Text('Cancel'),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                String newExercise = exerciseController.text.trim();
+                if (newExercise.isNotEmpty) {
+                  setState(() {
+                    exercises[category]!.add(newExercise);
+                  });
+                  Navigator.of(context).pop(); // Close the dialog
+                  Navigator.of(context).pop(); // Close the bottom sheet
+                  _showExercisesBottomSheet(context, category); // Refresh bottom sheet
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                        content:
+                        Text('Exercise "$newExercise" added successfully')),
+                  );
+                } else {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                        content: Text('Please enter a valid exercise name')),
+                  );
+                }
+              },
+              child: const Text('Add'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  /// Displays a dialog to add a new workout category
   void _showAddCategoryDialog(BuildContext context) {
     final formKey = GlobalKey<FormState>();
     String newCategory = '';
@@ -199,7 +345,7 @@ class _WorkoutPageState extends State<WorkoutPage> {
       context: context,
       builder: (context) {
         return AlertDialog(
-          title: const Text('افزودن دسته‌بندی جدید'),
+          title: const Text('Add New Category'),
           content: StatefulBuilder(
             builder: (context, setState) {
               return SingleChildScrollView(
@@ -208,17 +354,18 @@ class _WorkoutPageState extends State<WorkoutPage> {
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
+                      // Category Name Field
                       TextFormField(
                         decoration: const InputDecoration(
-                          labelText: 'نام دسته‌بندی',
+                          labelText: 'Category Name',
                           border: OutlineInputBorder(),
                         ),
                         validator: (value) {
                           if (value == null || value.isEmpty) {
-                            return 'لطفاً نام دسته‌بندی را وارد کنید';
+                            return 'Please enter the category name';
                           }
                           if (exercises.containsKey(value)) {
-                            return 'این دسته‌بندی قبلاً اضافه شده است';
+                            return 'This category has already been added';
                           }
                           return null;
                         },
@@ -227,36 +374,36 @@ class _WorkoutPageState extends State<WorkoutPage> {
                         },
                       ),
                       const SizedBox(height: 20),
-                      // انتخاب تصویر
+                      // Select Image
                       Row(
                         children: [
                           _selectedImage == null
                               ? Container(
-                                  width: 80,
-                                  height: 80,
-                                  decoration: BoxDecoration(
-                                    color: Colors.grey.shade200,
-                                    borderRadius: BorderRadius.circular(10),
-                                  ),
-                                  child: const Icon(Icons.image,
-                                      size: 40, color: Colors.grey),
-                                )
+                            width: 80,
+                            height: 80,
+                            decoration: BoxDecoration(
+                              color: Colors.grey.shade200,
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            child: const Icon(Icons.image,
+                                size: 40, color: Colors.grey),
+                          )
                               : ClipRRect(
-                                  borderRadius: BorderRadius.circular(10),
-                                  child: Image.file(
-                                    _selectedImage!,
-                                    width: 80,
-                                    height: 80,
-                                    fit: BoxFit.cover,
-                                  ),
-                                ),
+                            borderRadius: BorderRadius.circular(10),
+                            child: Image.file(
+                              _selectedImage!,
+                              width: 80,
+                              height: 80,
+                              fit: BoxFit.cover,
+                            ),
+                          ),
                           const SizedBox(width: 10),
                           ElevatedButton.icon(
                             onPressed: () {
                               _pickImage(setState);
                             },
                             icon: const Icon(Icons.photo_library),
-                            label: const Text(' تصویر'),
+                            label: const Text('Select Image'),
                             style: ElevatedButton.styleFrom(
                               backgroundColor: Colors.pinkAccent,
                             ),
@@ -264,23 +411,24 @@ class _WorkoutPageState extends State<WorkoutPage> {
                         ],
                       ),
                       const SizedBox(height: 20),
+                      // Exercises Section
                       const Align(
                         alignment: Alignment.centerLeft,
                         child: Text(
-                          'تمرینات',
+                          'Exercises',
                           style: TextStyle(
                               fontSize: 16, fontWeight: FontWeight.bold),
                         ),
                       ),
                       const SizedBox(height: 10),
-
+                      // Add Exercise Row
                       Row(
                         children: [
                           Expanded(
                             child: TextFormField(
                               controller: exerciseController,
                               decoration: const InputDecoration(
-                                labelText: 'تمرین جدید',
+                                labelText: 'New Exercise',
                                 border: OutlineInputBorder(),
                               ),
                             ),
@@ -288,7 +436,8 @@ class _WorkoutPageState extends State<WorkoutPage> {
                           IconButton(
                             icon: const Icon(Icons.add),
                             onPressed: () {
-                              String exercise = exerciseController.text.trim();
+                              String exercise =
+                              exerciseController.text.trim();
                               if (exercise.isNotEmpty) {
                                 setState(() {
                                   newExercises.add(exercise);
@@ -300,7 +449,7 @@ class _WorkoutPageState extends State<WorkoutPage> {
                         ],
                       ),
                       const SizedBox(height: 10),
-
+                      // List of Added Exercises
                       Container(
                         height: 100,
                         decoration: BoxDecoration(
@@ -309,24 +458,24 @@ class _WorkoutPageState extends State<WorkoutPage> {
                         ),
                         child: newExercises.isEmpty
                             ? const Center(
-                                child: Text('هیچ تمرینی اضافه نشده است'))
+                            child: Text('No exercises added'))
                             : ListView.builder(
-                                itemCount: newExercises.length,
-                                itemBuilder: (context, index) {
-                                  return ListTile(
-                                    title: Text(newExercises[index]),
-                                    trailing: IconButton(
-                                      icon: const Icon(Icons.remove_circle,
-                                          color: Colors.red),
-                                      onPressed: () {
-                                        setState(() {
-                                          newExercises.removeAt(index);
-                                        });
-                                      },
-                                    ),
-                                  );
+                          itemCount: newExercises.length,
+                          itemBuilder: (context, index) {
+                            return ListTile(
+                              title: Text(newExercises[index]),
+                              trailing: IconButton(
+                                icon: const Icon(Icons.remove_circle,
+                                    color: Colors.red),
+                                onPressed: () {
+                                  setState(() {
+                                    newExercises.removeAt(index);
+                                  });
                                 },
                               ),
+                            );
+                          },
+                        ),
                       ),
                     ],
                   ),
@@ -337,9 +486,9 @@ class _WorkoutPageState extends State<WorkoutPage> {
           actions: [
             TextButton(
               onPressed: () {
-                Navigator.of(context).pop();
+                Navigator.of(context).pop(); // Close the dialog
               },
-              child: const Text('لغو'),
+              child: const Text('Cancel'),
             ),
             ElevatedButton(
               onPressed: () {
@@ -347,14 +496,15 @@ class _WorkoutPageState extends State<WorkoutPage> {
                   if (newExercises.isEmpty) {
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(
-                          content: Text('لطفاً حداقل یک تمرین اضافه کنید')),
+                          content:
+                          Text('Please add at least one exercise')),
                     );
                     return;
                   }
                   if (_selectedImage == null) {
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(
-                          content: Text('لطفاً یک تصویر انتخاب کنید')),
+                          content: Text('Please select an image')),
                     );
                     return;
                   }
@@ -363,30 +513,33 @@ class _WorkoutPageState extends State<WorkoutPage> {
                     exercises[newCategory] = newExercises;
                     categoryImages[newCategory] = _selectedImage!.path;
                   });
-                  Navigator.of(context).pop();
+                  Navigator.of(context).pop(); // Close the dialog
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(
-                        content: Text('دسته‌بندی "$newCategory" اضافه شد')),
+                        content:
+                        Text('Category "$newCategory" added successfully')),
                   );
                 }
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.pinkAccent,
               ),
-              child: const Text('افزودن'),
+              child: const Text('Add'),
             ),
           ],
         );
       },
     ).then((_) {
-      exerciseController.dispose();
+      exerciseController.dispose(); // Dispose controller after dialog
     });
   }
 
-  Future<void> _pickImage(void Function(void Function()) setState) async {
+  /// Picks an image from the gallery
+  Future<void> _pickImage(
+      void Function(void Function()) setState) async {
     final ImagePicker picker = ImagePicker();
     final XFile? pickedImage =
-        await picker.pickImage(source: ImageSource.gallery);
+    await picker.pickImage(source: ImageSource.gallery);
 
     if (pickedImage != null) {
       setState(() {

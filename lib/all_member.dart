@@ -194,6 +194,7 @@ class _AllMemberState extends State<AllMember> {
             )
           : ListView.builder(
               itemCount: _filteredPersons.length,
+              itemExtent: 80,
               itemBuilder: (context, index) {
                 final person = _filteredPersons[index];
                 bool isExpired = _isExpired(person.startDate, person.duration);
@@ -254,7 +255,7 @@ class _AllMemberState extends State<AllMember> {
                                 builder: (ctx) => AlertDialog(
                                   title: const Text('Confirm Deletion'),
                                   content: const Text(
-                                      'Are you sure you want to delete this person?'),
+                                      'Are you sure you want to delete this person?',style:TextStyle(fontSize: 20)),
                                   actions: [
                                     TextButton(
                                       onPressed: () {
@@ -262,7 +263,7 @@ class _AllMemberState extends State<AllMember> {
                                       },
                                       child: const Text(
                                         'No',
-                                        style: TextStyle(color: Colors.red),
+                                        style: TextStyle(color: Colors.red,fontSize: 20),
                                       ),
                                     ),
                                     TextButton(
@@ -272,7 +273,7 @@ class _AllMemberState extends State<AllMember> {
                                       },
                                       child: const Text(
                                         'Yes',
-                                        style: TextStyle(color: Colors.green),
+                                        style: TextStyle(color: Colors.green,fontSize: 20),
                                       ),
                                     ),
                                   ],
