@@ -1,82 +1,102 @@
+// person.dart
+
 import 'package:intl/intl.dart';
 
 class Person {
-  int? id;
-  String firstName;
-  String lastName;
-  int age;
-  String? imagePath;
+  final int? id;
+  final String firstName;
+  final String lastName;
+  final int age;
+  final String duration; // e.g., 'One Month', 'Three Months'
+  final double fee;
+  final String startDate; // 'yyyy-MM-dd'
+  final String? imagePath;
   bool isFavorite;
-  double fee;
-  String startDate;
-  String duration;
 
   Person({
     this.id,
     required this.firstName,
     required this.lastName,
     required this.age,
-    this.imagePath,
-    this.isFavorite = false,
+    required this.duration,
     required this.fee,
     required this.startDate,
-    required this.duration,
+    this.imagePath,
+    this.isFavorite = false,
   });
 
+  /// Converts a Person object into a Map<String, dynamic>
   Map<String, dynamic> toMap() {
     return {
       'id': id,
       'firstName': firstName,
       'lastName': lastName,
       'age': age,
-      'imagePath': imagePath,
-      'isFavorite': isFavorite ? 1 : 0,
+      'duration': duration,
       'fee': fee,
       'startDate': startDate,
-      'duration': duration,
+      'imagePath': imagePath,
+      'isFavorite': isFavorite ? 1 : 0, // SQLite doesn't have boolean type
     };
   }
 
+  /// Creates a Person object from a Map<String, dynamic>
   factory Person.fromMap(Map<String, dynamic> map) {
     return Person(
       id: map['id'],
       firstName: map['firstName'],
       lastName: map['lastName'],
       age: map['age'],
+      duration: map['duration'],
+      fee: map['fee'],
+      startDate: map['startDate'],
       imagePath: map['imagePath'],
       isFavorite: map['isFavorite'] == 1,
-      fee: map['fee'] != null ? map['fee'].toDouble() : 1000.0,
-      startDate: map['startDate'] ?? '',
-      duration: map['duration'] ?? 'One Month',
     );
   }
 
-  DateTime get endDate {
-    DateTime start = DateFormat('yyyy-MM-dd').parse(startDate);
-    switch (duration) {
-      case 'One Month':
-        return DateTime(start.year, start.month + 1, start.day);
-      case 'Three Months':
-        return DateTime(start.year, start.month + 3, start.day);
-      case 'Six Months':
-        return DateTime(start.year, start.month + 6, start.day);
-      case 'One Year':
-        return DateTime(start.year + 1, start.month, start.day);
-      default:
-        return DateTime(start.year, start.month + 1, start.day);
+  /// Checks if the person's registration is expiring within [days] days
+  bool isExpiringWithin(int days) {
+    try {
+      DateTime today = DateTime.now();
+      DateTime start = DateFormat('yyyy-MM-dd').parse(startDate);
+      int durationMonths = durationToMonths(duration);
+      DateTime endDate = DateTime(start.year, start.month + durationMonths, start.day);
+      Duration difference = endDate.difference(today);
+      return difference.inDays <= days && difference.isNegative == false;
+    } catch (e) {
+      print('Error in isExpiringWithin: $e');
+      return false;
     }
   }
 
-  bool isExpiringWithin(int days) {
-    DateTime today = DateTime.now();
-    DateTime expiration = endDate;
-    Duration difference = expiration.difference(today);
-    return difference.inDays <= days && difference.inDays >= 0;
+  /// Checks if the person's registration has expired
+  bool hasExpired() {
+    try {
+      DateTime today = DateTime.now();
+      DateTime start = DateFormat('yyyy-MM-dd').parse(startDate);
+      int durationMonths = durationToMonths(duration);
+      DateTime endDate = DateTime(start.year, start.month + durationMonths, start.day);
+      return endDate.isBefore(today);
+    } catch (e) {
+      print('Error in hasExpired: $e');
+      return false;
+    }
   }
 
-  bool hasExpired() {
-    DateTime today = DateTime.now();
-    DateTime expiration = endDate;
-    return today.isAfter(expiration);
+  /// Helper method to convert duration string to number of months
+  int durationToMonths(String duration) {
+    switch (duration.toLowerCase()) {
+      case 'one month':
+        return 1;
+      case 'three months':
+        return 3;
+      case 'six months':
+        return 6;
+      case 'one year':
+        return 12;
+      default:
+        return 1; // Default to 1 month if unknown
+    }
   }
 }

@@ -1,10 +1,15 @@
+// database_helper.dart
+
 import 'dart:async';
+import 'dart:io'; // Needed for FileImage in ReportDialog
 import 'package:sqflite/sqflite.dart';
 import 'package:clup_management/person.dart';
 import 'package:path/path.dart';
 import 'package:flutter/foundation.dart';
+import 'package:intl/intl.dart';
 
 class DatabaseHelper {
+  // Singleton Pattern Implementation
   static final DatabaseHelper _instance = DatabaseHelper._internal();
 
   factory DatabaseHelper() => _instance;
@@ -17,7 +22,7 @@ class DatabaseHelper {
   static const String _dbName = 'club_management.db';
   static const String _tableName = 'persons';
 
-  // Getter for the database
+  /// Getter for the database instance
   Future<Database> get database async {
     if (_database != null) return _database!;
 
@@ -31,6 +36,7 @@ class DatabaseHelper {
     }
   }
 
+  /// Initializes the database
   Future<Database> _initDatabase() async {
     try {
       String databasesPath = await getDatabasesPath();
@@ -49,6 +55,7 @@ class DatabaseHelper {
     }
   }
 
+  /// Creates the database tables
   FutureOr<void> _onCreate(Database db, int version) async {
     try {
       await db.execute('''
@@ -71,6 +78,7 @@ class DatabaseHelper {
     }
   }
 
+  /// Handles database upgrades
   FutureOr<void> _onUpgrade(Database db, int oldVersion, int newVersion) async {
     if (oldVersion < 2) {
       try {
@@ -113,6 +121,7 @@ class DatabaseHelper {
     }
   }
 
+  /// Inserts a new person into the database
   Future<int> insertPerson(Person person) async {
     try {
       final db = await database;
@@ -123,10 +132,11 @@ class DatabaseHelper {
       );
     } catch (e) {
       debugPrint('Error inserting person: $e');
-      return -1;
+      return -1; // Indicates failure
     }
   }
 
+  /// Retrieves all persons from the database
   Future<List<Person>> getAllPersons() async {
     try {
       final db = await database;
@@ -141,6 +151,7 @@ class DatabaseHelper {
     }
   }
 
+  /// Retrieves favorite persons from the database
   Future<List<Person>> getFavoritePersons() async {
     try {
       final db = await database;
@@ -159,6 +170,7 @@ class DatabaseHelper {
     }
   }
 
+  /// Deletes a person from the database by ID
   Future<int> deletePerson(int id) async {
     try {
       final db = await database;
@@ -173,6 +185,7 @@ class DatabaseHelper {
     }
   }
 
+  /// Updates a person's details in the database
   Future<int> updatePerson(Person person) async {
     try {
       final db = await database;
@@ -188,13 +201,86 @@ class DatabaseHelper {
     }
   }
 
+  /// Toggles the favorite status of a person
   Future<int> toggleFavorite(Person person) async {
     person.isFavorite = !person.isFavorite;
     return await updatePerson(person);
   }
 
+  /// Closes the database connection
   Future<void> close() async {
     final db = await database;
     db.close();
+  }
+
+  /// Retrieves persons whose registration has expired
+  Future<List<Person>> getExpiredPersons() async {
+    try {
+      final db = await database;
+      final List<Map<String, dynamic>> maps = await db.query(_tableName);
+
+      DateTime today = DateTime.now();
+      List<Person> expiredPersons = [];
+
+      for (var map in maps) {
+        Person person = Person.fromMap(map);
+        DateTime startDate = DateFormat('yyyy-MM-dd').parse(person.startDate);
+        int durationMonths = durationToMonths(person.duration);
+        DateTime endDate = DateTime(startDate.year, startDate.month + durationMonths, startDate.day);
+
+        if (endDate.isBefore(today)) {
+          expiredPersons.add(person);
+        }
+      }
+
+      return expiredPersons;
+    } catch (e) {
+      debugPrint('Error retrieving expired persons: $e');
+      return [];
+    }
+  }
+
+  /// Retrieves persons whose registration is about to expire within [days] days
+  Future<List<Person>> getExpiringPersons(int days) async {
+    try {
+      final db = await database;
+      final List<Map<String, dynamic>> maps = await db.query(_tableName);
+
+      DateTime today = DateTime.now();
+      DateTime targetDate = today.add(Duration(days: days));
+      List<Person> expiringPersons = [];
+
+      for (var map in maps) {
+        Person person = Person.fromMap(map);
+        DateTime startDate = DateFormat('yyyy-MM-dd').parse(person.startDate);
+        int durationMonths = durationToMonths(person.duration);
+        DateTime endDate = DateTime(startDate.year, startDate.month + durationMonths, startDate.day);
+
+        if (endDate.isAfter(today) && endDate.isBefore(targetDate)) {
+          expiringPersons.add(person);
+        }
+      }
+
+      return expiringPersons;
+    } catch (e) {
+      debugPrint('Error retrieving expiring persons: $e');
+      return [];
+    }
+  }
+
+  /// Helper method to convert duration string to number of months
+  int durationToMonths(String duration) {
+    switch (duration.toLowerCase()) {
+      case 'one month':
+        return 1;
+      case 'three months':
+        return 3;
+      case 'six months':
+        return 6;
+      case 'one year':
+        return 12;
+      default:
+        return 1; // Default to 1 month if unknown
+    }
   }
 }

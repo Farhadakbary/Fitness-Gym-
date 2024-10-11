@@ -2,6 +2,7 @@ import 'package:clup_management/Settings.dart';
 import 'package:clup_management/about.dart';
 import 'package:clup_management/all_member.dart';
 import 'package:clup_management/favorite.dart';
+import 'package:clup_management/reports.dart';
 import 'package:clup_management/workout.dart';
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
@@ -179,7 +180,9 @@ class _DashboardState extends State<Dashboard>
               trailing:
                   const Icon(Icons.navigate_next_rounded, color: Colors.black),
               splashColor: Colors.white24,
-              onTap: () {},
+              onTap: () {
+                Navigator.push(context, MaterialPageRoute(builder: (context)=>const ReportPage()));
+              },
             ),
             ListTile(
               leading: const Icon(Icons.settings, color: Colors.black),
