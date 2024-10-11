@@ -281,7 +281,7 @@ class _AllMemberState extends State<AllMember> {
                                       },
                                       child: const Text(
                                         'No',
-                                        style: TextStyle(color: Colors.yellow),
+                                        style: TextStyle(color: Colors.red),
                                       ),
                                     ),
                                     TextButton(
@@ -291,7 +291,7 @@ class _AllMemberState extends State<AllMember> {
                                       },
                                       child: const Text(
                                         'Yes',
-                                        style: TextStyle(color: Colors.yellow),
+                                        style: TextStyle(color: Colors.green),
                                       ),
                                     ),
                                   ],
