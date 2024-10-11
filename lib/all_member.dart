@@ -230,26 +230,7 @@ class _AllMemberState extends State<AllMember> {
                           fontWeight: FontWeight.bold,
                         ),
                       ),
-                      subtitle: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            'Age: ${person.age}',
-                            style: TextStyle(
-                                color: isExpired ? Colors.grey : Colors.white),
-                          ),
-                          Text(
-                            'Fee: ${person.fee.truncate()} AFN',
-                            style: TextStyle(
-                                color: isExpired ? Colors.grey : Colors.white),
-                          ),
-                          Text(
-                            'Start Date: ${person.startDate}',
-                            style: TextStyle(
-                                color: isExpired ? Colors.grey : Colors.white),
-                          ),
-                        ],
-                      ),
+
                       trailing: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
