@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:clup_management/person.dart';
 import 'package:flutter/material.dart';
 import 'package:clup_management/database_helper.dart';
 import 'package:clup_management/person.dart';
@@ -120,6 +121,7 @@ class _HomePageState extends State<HomePage> {
         fee: double.parse(_feeController.text),
         startDate: DateFormat('yyyy-MM-dd').format(_selectedDate!),
         duration: _selectedDuration ?? 'One Month',
+        
       );
 
       await _dbHelper.insertPerson(newPerson);

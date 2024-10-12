@@ -5,7 +5,7 @@ import 'package:clup_management/favorite.dart';
 import 'package:clup_management/reports.dart';
 import 'package:clup_management/workout.dart';
 import 'package:flutter/material.dart';
-import 'package:fl_chart/fl_chart.dart';
+import 'package:carousel_slider/carousel_slider.dart';
 import 'Add_Member.dart';
 import 'database_helper.dart';
 import 'person.dart';
@@ -24,36 +24,27 @@ class Dashboard extends StatefulWidget {
   State<Dashboard> createState() => _DashboardState();
 }
 
-class _DashboardState extends State<Dashboard>
-    with TickerProviderStateMixin, RouteAware {
+class _DashboardState extends State<Dashboard> {
   final DatabaseHelper _dbHelper = DatabaseHelper();
-
   int totalRegistered = 0;
   int reRegisteredWithin10Days = 0;
   int notReRegistered = 0;
-
   Map<String, int> durationCounts = {};
+
+  List<String> imagePaths = [
+    'images/arm.jpg',
+    'images/leg.jpg',
+    'images/chest.jpg',
+    'images/desc.jpg',
+    'images/desc1.jpg',
+    'images/desc2.jpg',
+    'images/desc3.jpg',
+  ];
 
   @override
   void initState() {
     super.initState();
     fetchData();
-  }
-
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
-  }
-
-  @override
-  void didPopNext() {
-    super.didPopNext();
-    fetchData(); // Refresh data
   }
 
   Future<void> fetchData() async {
@@ -98,131 +89,148 @@ class _DashboardState extends State<Dashboard>
     });
   }
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.grey.shade500, // Dark gray background
-      drawer: Drawer(
-        backgroundColor: Colors.yellow.shade200,
+  Widget buildStatCard(String title, String value, Color color) {
+    return Card(
+      color: color,
+      elevation: 8.0,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
-            // Drawer Header
-            const UserAccountsDrawerHeader(
-              accountName: Text(
-                'UNIC GYM',
-                style: TextStyle(
-                    color: Colors.purple, fontWeight: FontWeight.bold),
-              ),
-              accountEmail: null,
-              currentAccountPicture: CircleAvatar(
-                backgroundColor: Colors.white,
-                child: Text(
-                  'U',
-                  style: TextStyle(fontSize: 40.0, color: Colors.purple),
-                ),
-              ),
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                    colors: [Colors.yellow, Colors.black],
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight),
+            Text(
+              title,
+              style: const TextStyle(
+                fontSize: 18,
+                color: Colors.black,
+                fontWeight: FontWeight.bold,
               ),
             ),
-            ListTile(
-              leading: const Icon(Icons.home, color: Colors.black),
-              title: const Text('All Members',
-                  style: TextStyle(color: Colors.black)),
-              trailing:
-                  const Icon(Icons.navigate_next_rounded, color: Colors.black),
-              splashColor: Colors.white24,
-              onTap: () {
-                // Navigate to AllMember
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => const AllMember())).then((_) {
-                  fetchData(); // Refresh data when returning
-                });
-              },
-            ),
-            ListTile(
-              leading: const Icon(Icons.favorite, color: Colors.black),
-              title: const Text('Favorites',
-                  style: TextStyle(color: Colors.black)),
-              trailing:
-                  const Icon(Icons.navigate_next_rounded, color: Colors.black),
-              splashColor: Colors.white24,
-              onTap: () {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => const Favorite())).then((_) {
-                  fetchData(); // Refresh data when returning
-                });
-              },
-            ),
-            ListTile(
-              leading: const Icon(Icons.fitness_center, color: Colors.black),
-              title:
-                  const Text('Programs', style: TextStyle(color: Colors.black)),
-              trailing:
-                  const Icon(Icons.navigate_next_rounded, color: Colors.black),
-              splashColor: Colors.white24,
-              onTap: () {
-                Navigator.push(context,
-                    MaterialPageRoute(builder: (context) => const WorkoutPage()));
-              },
-            ),
-            ListTile(
-              leading: const Icon(Icons.report, color: Colors.black),
-              title:
-                  const Text('Reports', style: TextStyle(color: Colors.black)),
-              trailing:
-                  const Icon(Icons.navigate_next_rounded, color: Colors.black),
-              splashColor: Colors.white24,
-              onTap: () {
-                Navigator.push(context, MaterialPageRoute(builder: (context)=>const ReportPage()));
-              },
-            ),
-            ListTile(
-              leading: const Icon(Icons.settings, color: Colors.black),
-              title:
-                  const Text('Settings', style: TextStyle(color: Colors.black)),
-              trailing:
-                  const Icon(Icons.navigate_next_rounded, color: Colors.black),
-              splashColor: Colors.white24,
-              onTap: () {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => SettingsPage(
-                              updateTheme: (isDarkMode) {
-                                widget.onThemeChanged(isDarkMode);
-                              },
-                              updateFontSize: (fontSize) {
-                                // Update your app font size here
-                              },
-                            ))).then((_) {
-                  fetchData(); // Refresh data when returning
-                });
-              },
-            ),
-            ListTile(
-              leading: const Icon(Icons.info_rounded, color: Colors.black),
-              title: const Text('About', style: TextStyle(color: Colors.black)),
-              trailing:
-                  const Icon(Icons.navigate_next_rounded, color: Colors.black),
-              splashColor: Colors.white24,
-              onTap: () {
-                // Navigate to About
-                Navigator.push(context,
-                    MaterialPageRoute(builder: (context) => const AboutPage()));
-              },
+            const SizedBox(height: 10),
+            Text(
+              value,
+              style: const TextStyle(
+                fontSize: 24,
+                color: Colors.white,
+                fontWeight: FontWeight.bold,
+              ),
             ),
           ],
         ),
       ),
-      appBar: AppBar(
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: const Color.fromRGBO(44, 44, 44, 1),
+      drawer: Drawer(
+      backgroundColor: Colors.yellow.shade100,
+      child: Column(
+        children: <Widget>[
+          const UserAccountsDrawerHeader(
+            accountName: Text(
+              'UNIC GYM',
+              style: TextStyle(
+                  color: Colors.white, fontWeight: FontWeight.bold),
+            ),
+            accountEmail: null,
+            currentAccountPicture: CircleAvatar(
+              backgroundColor: Colors.white,
+              child: Text(
+                'U',
+                style: TextStyle(fontSize: 40.0, color: Colors.purple),
+              ),
+            ),
+            decoration: BoxDecoration(
+              image: DecorationImage(image: AssetImage('images/desc.jpg'),fit: BoxFit.cover)
+              // gradient: LinearGradient(
+              //     colors: [Colors.yellow, Colors.black],
+              //     begin: Alignment.topLeft,
+              //     end: Alignment.bottomRight),
+            ),
+          ),
+          ListTile(
+            leading: const Icon(Icons.home, color: Colors.black),
+            title: const Text('All Members',
+                style: TextStyle(color: Colors.black)),
+            trailing: const Icon(Icons.navigate_next_rounded, color: Colors.black),
+            onTap: () {
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => const AllMember()))
+                  .then((_) => fetchData());
+            },
+          ),
+          ListTile(
+            leading: const Icon(Icons.favorite, color: Colors.black),
+            title: const Text('Favorites',
+                style: TextStyle(color: Colors.black)),
+            trailing: const Icon(Icons.navigate_next_rounded, color: Colors.black),
+            onTap: () {
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => const Favorite()))
+                  .then((_) => fetchData());
+            },
+          ),
+          ListTile(
+            leading: const Icon(Icons.fitness_center, color: Colors.black),
+            title: const Text('Programs',
+                style: TextStyle(color: Colors.black)),
+            trailing: const Icon(Icons.navigate_next_rounded, color: Colors.black),
+            onTap: () {
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => const WorkoutPage()));
+            },
+          ),
+          ListTile(
+            leading: const Icon(Icons.report, color: Colors.black),
+            title: const Text('Reports',
+                style: TextStyle(color: Colors.black)),
+            trailing: const Icon(Icons.navigate_next_rounded, color: Colors.black),
+            onTap: () {
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => const ReportPage()));
+            },
+          ),
+          ListTile(
+            leading: const Icon(Icons.settings, color: Colors.black),
+            title: const Text('Settings',
+                style: TextStyle(color: Colors.black)),
+            trailing: const Icon(Icons.navigate_next_rounded, color: Colors.black),
+            onTap: () {
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => SettingsPage(
+                        updateTheme: widget.onThemeChanged,
+                        updateFontSize: (fontSize) {},
+                      ))).then((_) => fetchData());
+            },
+          ),
+          ListTile(
+            leading: const Icon(Icons.info_rounded, color: Colors.black),
+            title: const Text('About',
+                style: TextStyle(color: Colors.black)),
+            trailing: const Icon(Icons.navigate_next_rounded, color: Colors.black),
+            onTap: () {
+              Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => const AboutPage()));
+            },
+          ),
+        ],
+      ),
+    ),
+    appBar: AppBar(
         title: const Text('UNIC GYM'),
         backgroundColor: Colors.yellow,
       ),
@@ -232,85 +240,89 @@ class _DashboardState extends State<Dashboard>
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              const Text(
-                'Registration Statistics',
-                style: TextStyle(
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.yellow,
+              // Image Slider
+              CarouselSlider(
+                options: CarouselOptions(
+                  height: 200.0,
+                  autoPlay: true,
+                  enlargeCenterPage: true,
+                  aspectRatio: 16 / 9,
+                  autoPlayInterval: const Duration(seconds: 3),
+                  viewportFraction: 0.8,
                 ),
-                textAlign: TextAlign.center,
+                items: imagePaths.map((imagePath) {
+                  return Builder(
+                    builder: (BuildContext context) {
+                      return Image.asset(imagePath, fit: BoxFit.cover);
+                    },
+                  );
+                }).toList(),
               ),
-              const SizedBox(height: 10),
-              // Pie Chart for Registration Statistics
-              SizedBox(
-                height: 200,
-                child: PieChart(
-                  PieChartData(
-                    sectionsSpace: 2,
-                    centerSpaceRadius: 30,
-                    sections: showingPieSections(),
-                    borderData: FlBorderData(show: false),
-                  ),
-                ),
-              ),
-              const SizedBox(height: 10),
-              // Indicators for Pie Chart
-              const Column(
+              const SizedBox(height: 20),
+              // Cards for Statistics
+              Row(
                 children: [
-                  Indicator(
-                    color: Colors.green,
-                    text: 'Registered',
-                    isSquare: true,
-                    textColor: Colors.black,
+                  Expanded(
+                    child: buildStatCard(
+                      'Total Registered',
+                      '$totalRegistered',
+                      Colors.yellow.shade600,
+                    ),
                   ),
-                  Indicator(
-                    color: Colors.yellow,
-                    text: 'Less than 10 days remaining',
-                    isSquare: true,
-                    textColor: Colors.black,
-                  ),
-                  Indicator(
-                    color: Colors.red,
-                    text: 'Not Re-registered',
-                    isSquare: true,
-                    textColor: Colors.black,
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: buildStatCard('Re-registered within 10 days',
+                        '$reRegisteredWithin10Days', Colors.yellow.shade600),
                   ),
                 ],
               ),
-              const SizedBox(height: 30),
-              // Second Chart Title
+              const SizedBox(height: 10),
+              Row(
+                children: [
+                  Expanded(
+                    child: buildStatCard('Not Re-registered',
+                        '$notReRegistered', Colors.yellow.shade600),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 20),
+              // Membership Duration Distribution
               const Text(
                 'Membership Duration Distribution',
                 style: TextStyle(
                   fontSize: 24,
                   fontWeight: FontWeight.bold,
-                  color: Colors.yellow,
+                  color: Colors.white,
                 ),
                 textAlign: TextAlign.center,
               ),
-              const SizedBox(height: 20),
-              // Second Chart: Doughnut Chart
-              SizedBox(
-                height: 200,
-                child: PieChart(
-                  PieChartData(
-                    sectionsSpace: 2,
-                    centerSpaceRadius: 40,
-                    sections: showingDurationPieSections(),
-                    borderData: FlBorderData(show: false),
-                  ),
-                ),
-              ),
               const SizedBox(height: 10),
-              // Indicators for Duration Pie Chart
               Column(
                 children: durationCounts.entries.map((entry) {
-                  return Indicator(
-                    color: getDurationColor(entry.key),
-                    text: '${entry.key}: ${entry.value}',
-                    isSquare: true,
-                    textColor: Colors.black,
+                  return Card(
+                    color: Colors.yellow.shade400,
+                    elevation: 8.0,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(15),
+                    ),
+                    child: ListTile(
+                      title: Text(
+                        entry.key,
+                        style: const TextStyle(
+                          fontSize: 18,
+                          color: Colors.black,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      trailing: Text(
+                        '${entry.value}',
+                        style: const TextStyle(
+                          fontSize: 18,
+                          color: Colors.black,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
                   );
                 }).toList(),
               ),
@@ -319,132 +331,17 @@ class _DashboardState extends State<Dashboard>
         ),
       ),
       floatingActionButton: FloatingActionButton(
-        backgroundColor: Colors.yellow,
-        child: const Icon(Icons.add, color: Colors.black),
         onPressed: () {
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => const HomePage()),
-          ).then((_) {
-            // Refresh data when returning from HomePage
-            fetchData();
-          });
-        },
-      ),
-    );
-  }
-
-  // Generate Pie Chart Sections for Registration Statistics
-  List<PieChartSectionData> showingPieSections() {
-    return [
-      PieChartSectionData(
-        color: Colors.green,
-        value: totalRegistered.toDouble(),
-        title: '$totalRegistered',
-        radius: 50,
-        titleStyle: const TextStyle(
-            fontSize: 18, fontWeight: FontWeight.bold, color: Colors.black),
-      ),
-      PieChartSectionData(
-        color: Colors.yellow,
-        value: reRegisteredWithin10Days.toDouble(),
-        title: '$reRegisteredWithin10Days',
-        radius: 50,
-        titleStyle: const TextStyle(
-            fontSize: 18, fontWeight: FontWeight.bold, color: Colors.black),
-      ),
-      PieChartSectionData(
-        color: Colors.red,
-        value: notReRegistered.toDouble(),
-        title: '$notReRegistered',
-        radius: 50,
-        titleStyle: const TextStyle(
-            fontSize: 18, fontWeight: FontWeight.bold, color: Colors.black),
-      ),
-    ];
-  }
-
-  // Generate Pie Chart Sections for Duration Distribution
-  List<PieChartSectionData> showingDurationPieSections() {
-    List<PieChartSectionData> sections = [];
-
-    durationCounts.forEach((duration, count) {
-      if (count == 0) return; // Skip if count is zero
-      sections.add(
-        PieChartSectionData(
-          color: getDurationColor(duration),
-          value: count.toDouble(),
-          title: '$count',
-          radius: 50,
-          titleStyle: const TextStyle(
-              fontSize: 16, fontWeight: FontWeight.bold, color: Colors.black),
-        ),
-      );
-    });
-
-    return sections;
-  }
-
-  // Assign colors based on duration
-  Color getDurationColor(String duration) {
-    switch (duration) {
-      case 'One Month':
-        return Colors.blue;
-      case 'Three Months':
-        return Colors.orange;
-      case 'Six Months':
-        return Colors.purple;
-      case 'One Year':
-        return Colors.brown;
-      default:
-        return Colors.grey;
-    }
-  }
-}
-
-// Indicator Widget
-class Indicator extends StatelessWidget {
-  final Color color;
-  final String text;
-  final bool isSquare;
-  final double size;
-  final Color textColor;
-
-  const Indicator({
-    super.key,
-    required this.color,
-    required this.text,
-    this.isSquare = true,
-    this.size = 16,
-    this.textColor = Colors.white,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      children: <Widget>[
-        Container(
-          width: size,
-          height: size,
-          decoration: BoxDecoration(
-            shape: isSquare ? BoxShape.rectangle : BoxShape.circle,
-            color: color,
-          ),
-        ),
-        const SizedBox(
-          width: 8,
-        ),
-        Expanded(
-          child: Text(
-            text,
-            style: TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.bold,
-              color: textColor,
+            MaterialPageRoute(
+              builder: (context) => const HomePage(), // صفحه افزودن شخص
             ),
-          ),
-        )
-      ],
+          ).then((_) => fetchData());
+        },
+        child: const Icon(Icons.add),
+        backgroundColor: Colors.yellow,
+      ),
     );
   }
 }

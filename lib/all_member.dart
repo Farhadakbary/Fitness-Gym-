@@ -123,17 +123,17 @@ class _AllMemberState extends State<AllMember> {
     }
   }
 
-  Color _getCardColor(bool isExpired) {
-    if (isExpired) {
-      return Colors.grey.shade800;
-    }
-    return Colors.black;
-  }
+  // Color _getCardColor(bool isExpired) {
+  //   if (isExpired) {
+  //     return Colors.grey.shade800;
+  //   }
+  //   return Colors.black;
+  // }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.grey.shade400,
+      backgroundColor: const Color.fromRGBO(44, 44, 44, 1),
       appBar: AppBar(
         title: const Text('All Members'),
         centerTitle: true,
@@ -204,7 +204,7 @@ class _AllMemberState extends State<AllMember> {
                     _editPerson(person);
                   },
                   child: Card(
-                    color: _getCardColor(isExpired),
+                    color: Colors.yellow.shade300,
                     margin:
                         const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
                     child: ListTile(
@@ -226,8 +226,8 @@ class _AllMemberState extends State<AllMember> {
                             ),
                       title: Text(
                         '${person.firstName} ${person.lastName}',
-                        style: TextStyle(
-                          color: isExpired ? Colors.grey : Colors.yellow,
+                        style:const TextStyle(
+                          color:  Colors.black,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
@@ -241,7 +241,7 @@ class _AllMemberState extends State<AllMember> {
                                   ? Icons.favorite
                                   : Icons.favorite_border,
                               color:
-                                  person.isFavorite ? Colors.red : Colors.grey,
+                                  person.isFavorite ? Colors.red : Colors.black,
                             ),
                             onPressed: () async {
                               await _toggleFavorite(person);

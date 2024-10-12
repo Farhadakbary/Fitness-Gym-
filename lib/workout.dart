@@ -534,7 +534,6 @@ class _WorkoutPageState extends State<WorkoutPage> {
     });
   }
 
-  /// Picks an image from the gallery
   Future<void> _pickImage(
       void Function(void Function()) setState) async {
     final ImagePicker picker = ImagePicker();
