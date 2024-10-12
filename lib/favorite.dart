@@ -49,7 +49,7 @@ class _FavoriteState extends State<Favorite> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.black26,
+      backgroundColor: const Color.fromRGBO(44, 44, 44, 1),
       appBar: AppBar(
         title: const Text('Favorite Members'),
         centerTitle: true,
@@ -67,7 +67,7 @@ class _FavoriteState extends State<Favorite> {
               itemBuilder: (context, index) {
                 final person = _favorites[index];
                 return Card(
-                  color: Colors.black,
+                  color: Colors.yellow.shade300,
                   margin:
                       const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
                   child: ListTile(
@@ -79,15 +79,15 @@ class _FavoriteState extends State<Favorite> {
                             fit: BoxFit.cover,
                           )
                         : const Icon(Icons.person,
-                            size: 50, color: Colors.yellow),
+                            size: 50, color: Colors.black),
                     title: Text(
                       '${person.firstName} ${person.lastName}',
                       style: const TextStyle(
-                          color: Colors.yellow, fontWeight: FontWeight.bold),
+                          color: Colors.black, fontWeight: FontWeight.bold),
                     ),
                     subtitle: Text(
                       'Age: ${person.age}',
-                      style: const TextStyle(color: Colors.white),
+                      style: const TextStyle(color: Colors.black),
                     ),
                     trailing: Row(
                       mainAxisSize: MainAxisSize.min,

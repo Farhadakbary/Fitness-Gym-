@@ -1,5 +1,3 @@
-// person.dart
-
 import 'package:intl/intl.dart';
 
 class Person {
@@ -7,9 +5,9 @@ class Person {
   final String firstName;
   final String lastName;
   final int age;
-  final String duration; // e.g., 'One Month', 'Three Months'
+  final String duration;
   final double fee;
-  final String startDate; // 'yyyy-MM-dd'
+  final String startDate;
   final String? imagePath;
   bool isFavorite;
 
@@ -25,7 +23,6 @@ class Person {
     this.isFavorite = false,
   });
 
-  /// Converts a Person object into a Map<String, dynamic>
   Map<String, dynamic> toMap() {
     return {
       'id': id,
@@ -36,11 +33,10 @@ class Person {
       'fee': fee,
       'startDate': startDate,
       'imagePath': imagePath,
-      'isFavorite': isFavorite ? 1 : 0, // SQLite doesn't have boolean type
+      'isFavorite': isFavorite ? 1 : 0,
     };
   }
 
-  /// Creates a Person object from a Map<String, dynamic>
   factory Person.fromMap(Map<String, dynamic> map) {
     return Person(
       id: map['id'],
@@ -55,7 +51,6 @@ class Person {
     );
   }
 
-  /// Checks if the person's registration is expiring within [days] days
   bool isExpiringWithin(int days) {
     try {
       DateTime today = DateTime.now();
@@ -70,7 +65,6 @@ class Person {
     }
   }
 
-  /// Checks if the person's registration has expired
   bool hasExpired() {
     try {
       DateTime today = DateTime.now();
@@ -83,8 +77,6 @@ class Person {
       return false;
     }
   }
-
-  /// Helper method to convert duration string to number of months
   int durationToMonths(String duration) {
     switch (duration.toLowerCase()) {
       case 'one month':
@@ -96,7 +88,7 @@ class Person {
       case 'one year':
         return 12;
       default:
-        return 1; // Default to 1 month if unknown
+        return 1;
     }
   }
 }

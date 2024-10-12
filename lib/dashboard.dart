@@ -127,110 +127,111 @@ class _DashboardState extends State<Dashboard> {
     return Scaffold(
       backgroundColor: const Color.fromRGBO(44, 44, 44, 1),
       drawer: Drawer(
-      backgroundColor: Colors.yellow.shade100,
-      child: Column(
-        children: <Widget>[
-          const UserAccountsDrawerHeader(
-            accountName: Text(
-              'UNIC GYM',
-              style: TextStyle(
-                  color: Colors.white, fontWeight: FontWeight.bold),
-            ),
-            accountEmail: null,
-            currentAccountPicture: CircleAvatar(
-              backgroundColor: Colors.white,
-              child: Text(
-                'U',
-                style: TextStyle(fontSize: 40.0, color: Colors.purple),
+        backgroundColor: Colors.yellow.shade100,
+        child: Column(
+          children: <Widget>[
+            const UserAccountsDrawerHeader(
+              accountName: Text(
+                'UNIC GYM',
+                style:
+                    TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
               ),
+              accountEmail: null,
+              currentAccountPicture: CircleAvatar(
+                backgroundColor: Colors.white,
+                child: Text(
+                  'U',
+                  style: TextStyle(fontSize: 40.0, color: Colors.purple),
+                ),
+              ),
+              decoration: BoxDecoration(
+                  image: DecorationImage(
+                      image: AssetImage('images/desc.jpg'), fit: BoxFit.cover)),
             ),
-            decoration: BoxDecoration(
-              image: DecorationImage(image: AssetImage('images/desc.jpg'),fit: BoxFit.cover)
-              // gradient: LinearGradient(
-              //     colors: [Colors.yellow, Colors.black],
-              //     begin: Alignment.topLeft,
-              //     end: Alignment.bottomRight),
+            ListTile(
+              leading: const Icon(Icons.home, color: Colors.black),
+              title: const Text('All Members',
+                  style: TextStyle(color: Colors.black)),
+              trailing:
+                  const Icon(Icons.navigate_next_rounded, color: Colors.black),
+              onTap: () {
+                Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const AllMember()))
+                    .then((_) => fetchData());
+              },
             ),
-          ),
-          ListTile(
-            leading: const Icon(Icons.home, color: Colors.black),
-            title: const Text('All Members',
-                style: TextStyle(color: Colors.black)),
-            trailing: const Icon(Icons.navigate_next_rounded, color: Colors.black),
-            onTap: () {
-              Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => const AllMember()))
-                  .then((_) => fetchData());
-            },
-          ),
-          ListTile(
-            leading: const Icon(Icons.favorite, color: Colors.black),
-            title: const Text('Favorites',
-                style: TextStyle(color: Colors.black)),
-            trailing: const Icon(Icons.navigate_next_rounded, color: Colors.black),
-            onTap: () {
-              Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => const Favorite()))
-                  .then((_) => fetchData());
-            },
-          ),
-          ListTile(
-            leading: const Icon(Icons.fitness_center, color: Colors.black),
-            title: const Text('Programs',
-                style: TextStyle(color: Colors.black)),
-            trailing: const Icon(Icons.navigate_next_rounded, color: Colors.black),
-            onTap: () {
-              Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => const WorkoutPage()));
-            },
-          ),
-          ListTile(
-            leading: const Icon(Icons.report, color: Colors.black),
-            title: const Text('Reports',
-                style: TextStyle(color: Colors.black)),
-            trailing: const Icon(Icons.navigate_next_rounded, color: Colors.black),
-            onTap: () {
-              Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => const ReportPage()));
-            },
-          ),
-          ListTile(
-            leading: const Icon(Icons.settings, color: Colors.black),
-            title: const Text('Settings',
-                style: TextStyle(color: Colors.black)),
-            trailing: const Icon(Icons.navigate_next_rounded, color: Colors.black),
-            onTap: () {
-              Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => SettingsPage(
-                        updateTheme: widget.onThemeChanged,
-                        updateFontSize: (fontSize) {},
-                      ))).then((_) => fetchData());
-            },
-          ),
-          ListTile(
-            leading: const Icon(Icons.info_rounded, color: Colors.black),
-            title: const Text('About',
-                style: TextStyle(color: Colors.black)),
-            trailing: const Icon(Icons.navigate_next_rounded, color: Colors.black),
-            onTap: () {
-              Navigator.push(context,
-                  MaterialPageRoute(builder: (context) => const AboutPage()));
-            },
-          ),
-        ],
+            ListTile(
+              leading: const Icon(Icons.favorite, color: Colors.black),
+              title: const Text('Favorites',
+                  style: TextStyle(color: Colors.black)),
+              trailing:
+                  const Icon(Icons.navigate_next_rounded, color: Colors.black),
+              onTap: () {
+                Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const Favorite()))
+                    .then((_) => fetchData());
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.fitness_center, color: Colors.black),
+              title:
+                  const Text('Programs', style: TextStyle(color: Colors.black)),
+              trailing:
+                  const Icon(Icons.navigate_next_rounded, color: Colors.black),
+              onTap: () {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => const WorkoutPage()));
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.report, color: Colors.black),
+              title:
+                  const Text('Reports', style: TextStyle(color: Colors.black)),
+              trailing:
+                  const Icon(Icons.navigate_next_rounded, color: Colors.black),
+              onTap: () {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => const ReportPage()));
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.settings, color: Colors.black),
+              title:
+                  const Text('Settings', style: TextStyle(color: Colors.black)),
+              trailing:
+                  const Icon(Icons.navigate_next_rounded, color: Colors.black),
+              onTap: () {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => SettingsPage(
+                              updateTheme: widget.onThemeChanged,
+                              updateFontSize: (fontSize) {},
+                            ))).then((_) => fetchData());
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.info_rounded, color: Colors.black),
+              title: const Text('About', style: TextStyle(color: Colors.black)),
+              trailing:
+                  const Icon(Icons.navigate_next_rounded, color: Colors.black),
+              onTap: () {
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) =>  AboutPage()));
+              },
+            ),
+          ],
+        ),
       ),
-    ),
-    appBar: AppBar(
+      appBar: AppBar(
         title: const Text('UNIC GYM'),
         backgroundColor: Colors.yellow,
       ),
@@ -259,7 +260,6 @@ class _DashboardState extends State<Dashboard> {
                 }).toList(),
               ),
               const SizedBox(height: 20),
-              // Cards for Statistics
               Row(
                 children: [
                   Expanded(
@@ -335,12 +335,12 @@ class _DashboardState extends State<Dashboard> {
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => const HomePage(), // صفحه افزودن شخص
+              builder: (context) => const AddMember(),
             ),
           ).then((_) => fetchData());
         },
-        child: const Icon(Icons.add),
         backgroundColor: Colors.yellow,
+        child: const Icon(Icons.add),
       ),
     );
   }

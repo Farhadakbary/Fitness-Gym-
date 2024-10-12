@@ -1,8 +1,21 @@
+import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 
-class AboutPage extends StatelessWidget {
-  const AboutPage({Key? key}) : super(key: key);
+class AboutPage extends StatefulWidget {
+   AboutPage({Key? key}) : super(key: key);
 
+  @override
+  State<AboutPage> createState() => _AboutPageState();
+}
+
+class _AboutPageState extends State<AboutPage> {
+  List<String> imagePaths = [
+    'images/beg.jpg',
+    'images/leg.jpg',
+    'images/second.jpg',
+    'images/back.jpg',
+    'images/splash.jpg',
+  ];
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -14,30 +27,23 @@ class AboutPage extends StatelessWidget {
       body: SingleChildScrollView(
         child: Column(
           children: [
-            GridView.count(
-              crossAxisCount: 1,
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
-              padding: const EdgeInsets.all(6.0),
-              children: List.generate(1, (index) {
-                return GestureDetector(
-                  onTap: () {
-                    _showFullImage(context, 'images/chest.jpg');
+            CarouselSlider(
+              options: CarouselOptions(
+                height: 200.0,
+                autoPlay: true,
+                enlargeCenterPage: true,
+                aspectRatio: 16 / 9,
+                autoPlayInterval: const Duration(seconds: 3),
+                viewportFraction: 0.8,
+              ),
+              items: imagePaths.map((imagePath) {
+                return Builder(
+                  builder: (BuildContext context) {
+                    return Image.asset(imagePath, fit: BoxFit.cover);
                   },
-                  child: Container(
-                    margin: const EdgeInsets.all(8.0),
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(15),
-                      image: const DecorationImage(
-                        image: AssetImage('images/chest.jpg'),
-                        fit: BoxFit.cover,
-                      ),
-                    ),
-                  ),
                 );
-              }),
+              }).toList(),
             ),
-            // توضیحات درباره کلپ
             const Padding(
               padding: EdgeInsets.all(16.0),
               child: Text(

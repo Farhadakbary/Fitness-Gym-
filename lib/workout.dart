@@ -1,5 +1,3 @@
-// WorkoutPage.dart
-
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
@@ -12,7 +10,6 @@ class WorkoutPage extends StatefulWidget {
 }
 
 class _WorkoutPageState extends State<WorkoutPage> {
-  // Initial exercises map with English category names
   Map<String, List<String>> exercises = {
     'Arms': [
       'Dumbbell Exercise',
@@ -41,7 +38,6 @@ class _WorkoutPageState extends State<WorkoutPage> {
     'Second': ['Chest Press', 'Upper Chest', 'Bicep', 'Tricep']
   };
 
-  // Map to store image paths for each category
   final Map<String, String> categoryImages = {
     'Arms': 'images/arm.jpg',
     'Legs': 'images/leg.jpg',
@@ -130,26 +126,23 @@ class _WorkoutPageState extends State<WorkoutPage> {
     );
   }
 
-  /// Displays the bottom sheet with exercises and options to add/remove
   void _showExercisesBottomSheet(BuildContext context, String category) {
     showModalBottomSheet(
       context: context,
       backgroundColor: Colors.white,
-      isScrollControlled: true, // To make full-screen dialogs if needed
+      isScrollControlled: true,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(25.0)),
       ),
       builder: (context) {
         return StatefulBuilder(
-          // To manage state within the bottom sheet
           builder: (context, setState) {
             return Container(
               padding: const EdgeInsets.all(20),
-              height: MediaQuery.of(context).size.height * 0.6, // Adjust height as needed
+              height: MediaQuery.of(context).size.height * 0.6,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Drag Handle
                   Center(
                     child: Container(
                       width: 50,
@@ -174,46 +167,47 @@ class _WorkoutPageState extends State<WorkoutPage> {
                   Expanded(
                     child: exercises[category]!.isEmpty
                         ? const Center(
-                      child: Text(
-                        'No exercises added.',
-                        style: TextStyle(fontSize: 16, color: Colors.grey),
-                      ),
-                    )
-                        : ListView.builder(
-                      itemCount: exercises[category]!.length,
-                      itemBuilder: (context, index) {
-                        String exercise = exercises[category]![index];
-                        return ListTile(
-                          leading: const Icon(
-                            Icons.check_circle,
-                            color: Colors.green,
-                          ),
-                          title: Text(
-                            exercise,
-                            style: const TextStyle(fontSize: 18),
-                          ),
-                          trailing: IconButton(
-                            icon: const Icon(
-                              Icons.delete,
-                              color: Colors.red,
+                            child: Text(
+                              'No exercises added.',
+                              style:
+                                  TextStyle(fontSize: 16, color: Colors.grey),
                             ),
-                            onPressed: () {
-                              // Confirm deletion
-                              _confirmDeleteExercise(
-                                  context, category, index);
+                          )
+                        : ListView.builder(
+                            itemCount: exercises[category]!.length,
+                            itemBuilder: (context, index) {
+                              String exercise = exercises[category]![index];
+                              return ListTile(
+                                leading: const Icon(
+                                  Icons.check_circle,
+                                  color: Colors.green,
+                                ),
+                                title: Text(
+                                  exercise,
+                                  style: const TextStyle(fontSize: 18),
+                                ),
+                                trailing: IconButton(
+                                  icon: const Icon(
+                                    Icons.delete,
+                                    color: Colors.red,
+                                  ),
+                                  onPressed: () {
+                                    // Confirm deletion
+                                    _confirmDeleteExercise(
+                                        context, category, index);
+                                  },
+                                ),
+                                onTap: () {
+                                  Navigator.pop(context);
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                        content: Text(
+                                            'Exercise "$exercise" selected')),
+                                  );
+                                },
+                              );
                             },
                           ),
-                          onTap: () {
-                            Navigator.pop(context);
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
-                                  content: Text(
-                                      'Exercise "$exercise" selected')),
-                            );
-                          },
-                        );
-                      },
-                    ),
                   ),
                   // Add Exercise Button
                   ElevatedButton.icon(
@@ -241,7 +235,6 @@ class _WorkoutPageState extends State<WorkoutPage> {
     );
   }
 
-  /// Shows a dialog to confirm deletion of an exercise
   void _confirmDeleteExercise(
       BuildContext context, String category, int index) {
     showDialog(
@@ -253,7 +246,7 @@ class _WorkoutPageState extends State<WorkoutPage> {
           actions: [
             TextButton(
               onPressed: () {
-                Navigator.of(context).pop(); // Close the dialog
+                Navigator.of(context).pop();
               },
               child: const Text('Cancel'),
             ),
@@ -262,9 +255,9 @@ class _WorkoutPageState extends State<WorkoutPage> {
                 setState(() {
                   exercises[category]!.removeAt(index);
                 });
-                Navigator.of(context).pop(); // Close the dialog
-                Navigator.of(context).pop(); // Close the bottom sheet
-                _showExercisesBottomSheet(context, category); // Refresh bottom sheet
+                Navigator.of(context).pop();
+                Navigator.of(context).pop();
+                _showExercisesBottomSheet(context, category);
                 ScaffoldMessenger.of(context).showSnackBar(
                   const SnackBar(content: Text('Exercise deleted')),
                 );
@@ -280,7 +273,6 @@ class _WorkoutPageState extends State<WorkoutPage> {
     );
   }
 
-  /// Shows a dialog to add a new exercise
   void _showAddExerciseDialog(
       BuildContext context, String category, Function setState) {
     final TextEditingController exerciseController = TextEditingController();
@@ -300,7 +292,7 @@ class _WorkoutPageState extends State<WorkoutPage> {
           actions: [
             TextButton(
               onPressed: () {
-                Navigator.of(context).pop(); // Close the dialog
+                Navigator.of(context).pop();
               },
               child: const Text('Cancel'),
             ),
@@ -311,13 +303,13 @@ class _WorkoutPageState extends State<WorkoutPage> {
                   setState(() {
                     exercises[category]!.add(newExercise);
                   });
-                  Navigator.of(context).pop(); // Close the dialog
-                  Navigator.of(context).pop(); // Close the bottom sheet
-                  _showExercisesBottomSheet(context, category); // Refresh bottom sheet
+                  Navigator.of(context).pop();
+                  Navigator.of(context).pop();
+                  _showExercisesBottomSheet(context, category);
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(
                         content:
-                        Text('Exercise "$newExercise" added successfully')),
+                            Text('Exercise "$newExercise" added successfully')),
                   );
                 } else {
                   ScaffoldMessenger.of(context).showSnackBar(
@@ -334,7 +326,6 @@ class _WorkoutPageState extends State<WorkoutPage> {
     );
   }
 
-  /// Displays a dialog to add a new workout category
   void _showAddCategoryDialog(BuildContext context) {
     final formKey = GlobalKey<FormState>();
     String newCategory = '';
@@ -354,7 +345,6 @@ class _WorkoutPageState extends State<WorkoutPage> {
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      // Category Name Field
                       TextFormField(
                         decoration: const InputDecoration(
                           labelText: 'Category Name',
@@ -374,29 +364,29 @@ class _WorkoutPageState extends State<WorkoutPage> {
                         },
                       ),
                       const SizedBox(height: 20),
-                      // Select Image
+
                       Row(
                         children: [
                           _selectedImage == null
                               ? Container(
-                            width: 80,
-                            height: 80,
-                            decoration: BoxDecoration(
-                              color: Colors.grey.shade200,
-                              borderRadius: BorderRadius.circular(10),
-                            ),
-                            child: const Icon(Icons.image,
-                                size: 40, color: Colors.grey),
-                          )
+                                  width: 80,
+                                  height: 80,
+                                  decoration: BoxDecoration(
+                                    color: Colors.grey.shade200,
+                                    borderRadius: BorderRadius.circular(10),
+                                  ),
+                                  child: const Icon(Icons.image,
+                                      size: 40, color: Colors.grey),
+                                )
                               : ClipRRect(
-                            borderRadius: BorderRadius.circular(10),
-                            child: Image.file(
-                              _selectedImage!,
-                              width: 80,
-                              height: 80,
-                              fit: BoxFit.cover,
-                            ),
-                          ),
+                                  borderRadius: BorderRadius.circular(10),
+                                  child: Image.file(
+                                    _selectedImage!,
+                                    width: 80,
+                                    height: 80,
+                                    fit: BoxFit.cover,
+                                  ),
+                                ),
                           const SizedBox(width: 10),
                           ElevatedButton.icon(
                             onPressed: () {
@@ -405,7 +395,7 @@ class _WorkoutPageState extends State<WorkoutPage> {
                             icon: const Icon(Icons.photo_library),
                             label: const Text('Select Image'),
                             style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.pinkAccent,
+                              backgroundColor: Colors.yellow,
                             ),
                           ),
                         ],
@@ -436,8 +426,7 @@ class _WorkoutPageState extends State<WorkoutPage> {
                           IconButton(
                             icon: const Icon(Icons.add),
                             onPressed: () {
-                              String exercise =
-                              exerciseController.text.trim();
+                              String exercise = exerciseController.text.trim();
                               if (exercise.isNotEmpty) {
                                 setState(() {
                                   newExercises.add(exercise);
@@ -449,7 +438,6 @@ class _WorkoutPageState extends State<WorkoutPage> {
                         ],
                       ),
                       const SizedBox(height: 10),
-                      // List of Added Exercises
                       Container(
                         height: 100,
                         decoration: BoxDecoration(
@@ -457,25 +445,24 @@ class _WorkoutPageState extends State<WorkoutPage> {
                           borderRadius: BorderRadius.circular(5),
                         ),
                         child: newExercises.isEmpty
-                            ? const Center(
-                            child: Text('No exercises added'))
+                            ? const Center(child: Text('No exercises added'))
                             : ListView.builder(
-                          itemCount: newExercises.length,
-                          itemBuilder: (context, index) {
-                            return ListTile(
-                              title: Text(newExercises[index]),
-                              trailing: IconButton(
-                                icon: const Icon(Icons.remove_circle,
-                                    color: Colors.red),
-                                onPressed: () {
-                                  setState(() {
-                                    newExercises.removeAt(index);
-                                  });
+                                itemCount: newExercises.length,
+                                itemBuilder: (context, index) {
+                                  return ListTile(
+                                    title: Text(newExercises[index]),
+                                    trailing: IconButton(
+                                      icon: const Icon(Icons.remove_circle,
+                                          color: Colors.red),
+                                      onPressed: () {
+                                        setState(() {
+                                          newExercises.removeAt(index);
+                                        });
+                                      },
+                                    ),
+                                  );
                                 },
                               ),
-                            );
-                          },
-                        ),
                       ),
                     ],
                   ),
@@ -486,7 +473,7 @@ class _WorkoutPageState extends State<WorkoutPage> {
           actions: [
             TextButton(
               onPressed: () {
-                Navigator.of(context).pop(); // Close the dialog
+                Navigator.of(context).pop();
               },
               child: const Text('Cancel'),
             ),
@@ -496,15 +483,13 @@ class _WorkoutPageState extends State<WorkoutPage> {
                   if (newExercises.isEmpty) {
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(
-                          content:
-                          Text('Please add at least one exercise')),
+                          content: Text('Please add at least one exercise')),
                     );
                     return;
                   }
                   if (_selectedImage == null) {
                     ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                          content: Text('Please select an image')),
+                      const SnackBar(content: Text('Please select an image')),
                     );
                     return;
                   }
@@ -513,16 +498,16 @@ class _WorkoutPageState extends State<WorkoutPage> {
                     exercises[newCategory] = newExercises;
                     categoryImages[newCategory] = _selectedImage!.path;
                   });
-                  Navigator.of(context).pop(); // Close the dialog
+                  Navigator.of(context).pop();
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(
                         content:
-                        Text('Category "$newCategory" added successfully')),
+                            Text('Category "$newCategory" added successfully')),
                   );
                 }
               },
               style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.pinkAccent,
+                backgroundColor: Colors.yellow,
               ),
               child: const Text('Add'),
             ),
@@ -530,15 +515,14 @@ class _WorkoutPageState extends State<WorkoutPage> {
         );
       },
     ).then((_) {
-      exerciseController.dispose(); // Dispose controller after dialog
+      exerciseController.dispose();
     });
   }
 
-  Future<void> _pickImage(
-      void Function(void Function()) setState) async {
+  Future<void> _pickImage(void Function(void Function()) setState) async {
     final ImagePicker picker = ImagePicker();
     final XFile? pickedImage =
-    await picker.pickImage(source: ImageSource.gallery);
+        await picker.pickImage(source: ImageSource.gallery);
 
     if (pickedImage != null) {
       setState(() {

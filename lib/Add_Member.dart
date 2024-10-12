@@ -2,19 +2,18 @@ import 'dart:io';
 import 'package:clup_management/person.dart';
 import 'package:flutter/material.dart';
 import 'package:clup_management/database_helper.dart';
-import 'package:clup_management/person.dart';
 import 'package:clup_management/all_member.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 
-class HomePage extends StatefulWidget {
-  const HomePage({super.key});
+class AddMember extends StatefulWidget {
+  const AddMember({super.key});
 
   @override
-  State<HomePage> createState() => _HomePageState();
+  State<AddMember> createState() => _AddMemberState();
 }
 
-class _HomePageState extends State<HomePage> {
+class _AddMemberState extends State<AddMember> {
   final DatabaseHelper _dbHelper = DatabaseHelper();
   final _formKey = GlobalKey<FormState>();
 
@@ -45,7 +44,6 @@ class _HomePageState extends State<HomePage> {
     super.dispose();
   }
 
-  // Pick an image from gallery
   Future<void> _pickImage() async {
     final ImagePicker picker = ImagePicker();
     final XFile? pickedImage =

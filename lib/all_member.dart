@@ -123,13 +123,6 @@ class _AllMemberState extends State<AllMember> {
     }
   }
 
-  // Color _getCardColor(bool isExpired) {
-  //   if (isExpired) {
-  //     return Colors.grey.shade800;
-  //   }
-  //   return Colors.black;
-  // }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -226,12 +219,11 @@ class _AllMemberState extends State<AllMember> {
                             ),
                       title: Text(
                         '${person.firstName} ${person.lastName}',
-                        style:const TextStyle(
-                          color:  Colors.black,
+                        style: const TextStyle(
+                          color: Colors.black,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
-
                       trailing: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
@@ -255,7 +247,8 @@ class _AllMemberState extends State<AllMember> {
                                 builder: (ctx) => AlertDialog(
                                   title: const Text('Confirm Deletion'),
                                   content: const Text(
-                                      'Are you sure you want to delete this person?',style:TextStyle(fontSize: 20)),
+                                      'Are you sure you want to delete this person?',
+                                      style: TextStyle(fontSize: 20)),
                                   actions: [
                                     TextButton(
                                       onPressed: () {
@@ -263,7 +256,8 @@ class _AllMemberState extends State<AllMember> {
                                       },
                                       child: const Text(
                                         'No',
-                                        style: TextStyle(color: Colors.red,fontSize: 20),
+                                        style: TextStyle(
+                                            color: Colors.red, fontSize: 20),
                                       ),
                                     ),
                                     TextButton(
@@ -273,7 +267,8 @@ class _AllMemberState extends State<AllMember> {
                                       },
                                       child: const Text(
                                         'Yes',
-                                        style: TextStyle(color: Colors.green,fontSize: 20),
+                                        style: TextStyle(
+                                            color: Colors.green, fontSize: 20),
                                       ),
                                     ),
                                   ],

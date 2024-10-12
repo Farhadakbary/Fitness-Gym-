@@ -1,5 +1,3 @@
-// EditMember.dart
-
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:clup_management/database_helper.dart';
@@ -26,13 +24,10 @@ class _EditMemberState extends State<EditMember> {
   late TextEditingController _ageController;
   late TextEditingController _feeController;
 
-  // For image
   File? _imageFile;
 
-  // For date
   DateTime? _selectedDate;
 
-  // For duration
   String? _selectedDuration;
   final List<String> _durations = [
     'One Month',
@@ -44,13 +39,13 @@ class _EditMemberState extends State<EditMember> {
   @override
   void initState() {
     super.initState();
-    // Initialize controllers with existing data
     _firstNameController = TextEditingController(text: widget.person.firstName);
     _lastNameController = TextEditingController(text: widget.person.lastName);
     _ageController = TextEditingController(text: widget.person.age.toString());
     _feeController = TextEditingController(text: widget.person.fee.toString());
 
-    _imageFile = widget.person.imagePath != null ? File(widget.person.imagePath!) : null;
+    _imageFile =
+        widget.person.imagePath != null ? File(widget.person.imagePath!) : null;
 
     _selectedDate = widget.person.startDate.isNotEmpty
         ? DateFormat('yyyy-MM-dd').parse(widget.person.startDate)
@@ -68,11 +63,10 @@ class _EditMemberState extends State<EditMember> {
     super.dispose();
   }
 
-  // Pick an image from gallery
   Future<void> _pickImage() async {
     final ImagePicker _picker = ImagePicker();
     final XFile? pickedImage =
-    await _picker.pickImage(source: ImageSource.gallery);
+        await _picker.pickImage(source: ImageSource.gallery);
 
     if (pickedImage != null) {
       setState(() {
@@ -81,7 +75,6 @@ class _EditMemberState extends State<EditMember> {
     }
   }
 
-  // Pick a date
   Future<void> _pickDate() async {
     final DateTime? picked = await showDatePicker(
       context: context,
@@ -96,7 +89,6 @@ class _EditMemberState extends State<EditMember> {
     }
   }
 
-  // Update fee based on duration
   void _updateFeeRange(String? duration) {
     double minFee = 1000;
     double maxFee = 1000;
@@ -128,7 +120,6 @@ class _EditMemberState extends State<EditMember> {
     });
   }
 
-  // Save updated person to the database
   Future<void> _savePerson() async {
     if (_formKey.currentState!.validate()) {
       if (_selectedDate == null) {
@@ -157,7 +148,7 @@ class _EditMemberState extends State<EditMember> {
           const SnackBar(content: Text('Person updated successfully')),
         );
 
-        Navigator.pop(context, true); // Indicate that an update occurred
+        Navigator.pop(context, true);
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Failed to update person')),
@@ -166,7 +157,6 @@ class _EditMemberState extends State<EditMember> {
     }
   }
 
-  // Get fee range description
   String _getFeeRange() {
     switch (_selectedDuration) {
       case 'One Month':
@@ -210,8 +200,8 @@ class _EditMemberState extends State<EditMember> {
                   controller: _firstNameController,
                   decoration: const InputDecoration(
                     labelText: 'First Name',
-                    labelStyle:
-                    TextStyle(fontWeight: FontWeight.bold, color: Colors.black),
+                    labelStyle: TextStyle(
+                        fontWeight: FontWeight.bold, color: Colors.black),
                     border: OutlineInputBorder(),
                     suffixIcon: Icon(Icons.person),
                   ),
@@ -229,8 +219,8 @@ class _EditMemberState extends State<EditMember> {
                   decoration: const InputDecoration(
                     labelText: 'Last Name',
                     border: OutlineInputBorder(),
-                    labelStyle:
-                    TextStyle(fontWeight: FontWeight.bold, color: Colors.black),
+                    labelStyle: TextStyle(
+                        fontWeight: FontWeight.bold, color: Colors.black),
                     suffixIcon: Icon(Icons.person),
                   ),
                   validator: (value) {
@@ -248,8 +238,8 @@ class _EditMemberState extends State<EditMember> {
                     labelText: 'Age',
                     suffixIcon: Icon(Icons.calendar_today),
                     border: OutlineInputBorder(),
-                    labelStyle:
-                    TextStyle(fontWeight: FontWeight.bold, color: Colors.black),
+                    labelStyle: TextStyle(
+                        fontWeight: FontWeight.bold, color: Colors.black),
                   ),
                   keyboardType: TextInputType.number,
                   validator: (value) {
@@ -263,21 +253,20 @@ class _EditMemberState extends State<EditMember> {
                   },
                 ),
                 const SizedBox(height: 15),
-                // Duration Dropdown
                 DropdownButtonFormField<String>(
                   decoration: const InputDecoration(
                     labelText: 'Duration',
                     border: OutlineInputBorder(),
-                    labelStyle:
-                    TextStyle(fontWeight: FontWeight.bold, color: Colors.black),
+                    labelStyle: TextStyle(
+                        fontWeight: FontWeight.bold, color: Colors.black),
                     suffixIcon: Icon(Icons.arrow_drop_down),
                   ),
                   value: _selectedDuration,
                   items: _durations
                       .map((duration) => DropdownMenuItem(
-                    value: duration,
-                    child: Text(duration),
-                  ))
+                            value: duration,
+                            child: Text(duration),
+                          ))
                       .toList(),
                   onChanged: (value) {
                     setState(() {
@@ -299,8 +288,8 @@ class _EditMemberState extends State<EditMember> {
                   decoration: InputDecoration(
                     labelText: 'Fee',
                     border: const OutlineInputBorder(),
-                    labelStyle:
-                    const TextStyle(fontWeight: FontWeight.bold, color: Colors.black),
+                    labelStyle: const TextStyle(
+                        fontWeight: FontWeight.bold, color: Colors.black),
                     suffixIcon: const Icon(Icons.money),
                     hintText: _getFeeRange(),
                   ),
@@ -347,7 +336,6 @@ class _EditMemberState extends State<EditMember> {
                   },
                 ),
                 const SizedBox(height: 15),
-                // Date Picker
                 Row(
                   children: [
                     Expanded(
@@ -390,24 +378,24 @@ class _EditMemberState extends State<EditMember> {
                   children: [
                     _imageFile != null
                         ? Image.file(
-                      _imageFile!,
-                      width: 100,
-                      height: 100,
-                      fit: BoxFit.cover,
-                    )
+                            _imageFile!,
+                            width: 100,
+                            height: 100,
+                            fit: BoxFit.cover,
+                          )
                         : Container(
-                      width: 100,
-                      height: 100,
-                      decoration: BoxDecoration(
-                        color: Colors.grey[300],
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      child: const Icon(
-                        Icons.person,
-                        size: 50,
-                        color: Colors.black54,
-                      ),
-                    ),
+                            width: 100,
+                            height: 100,
+                            decoration: BoxDecoration(
+                              color: Colors.grey[300],
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            child: const Icon(
+                              Icons.person,
+                              size: 50,
+                              color: Colors.black54,
+                            ),
+                          ),
                     const SizedBox(width: 10),
                     ElevatedButton(
                       onPressed: _pickImage,
