@@ -18,7 +18,6 @@ class _EditMemberState extends State<EditMember> {
   final DatabaseHelper _dbHelper = DatabaseHelper();
   final _formKey = GlobalKey<FormState>();
 
-  // Controllers for the form fields
   late TextEditingController _firstNameController;
   late TextEditingController _lastNameController;
   late TextEditingController _ageController;

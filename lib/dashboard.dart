@@ -64,7 +64,6 @@ class _DashboardState extends State<Dashboard> {
     DateTime today = DateTime.now();
 
     for (var person in persons) {
-      // Count duration
       if (tempDurationCounts.containsKey(person.duration)) {
         tempDurationCounts[person.duration] =
             tempDurationCounts[person.duration]! + 1;
@@ -213,7 +212,7 @@ class _DashboardState extends State<Dashboard> {
                     context,
                     MaterialPageRoute(
                         builder: (context) => SettingsPage(
-                              updateTheme: widget.onThemeChanged,
+                             updateTheme: widget.onThemeChanged,
                               updateFontSize: (fontSize) {},
                             ))).then((_) => fetchData());
               },

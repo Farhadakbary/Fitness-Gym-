@@ -20,7 +20,7 @@ class _SettingsPageState extends State<SettingsPage> {
   double fontSize = 12.0;
   String language = 'English';
 
-  List<String> items = ['English', 'Dari', 'Deutsch', 'Arabic'];
+  List<String> items = ['English', 'Dari'];
 
   @override
   void initState() {
@@ -30,7 +30,7 @@ class _SettingsPageState extends State<SettingsPage> {
 
   @override
   void dispose() {
-    super.dispose(); // Correctly override dispose method
+    super.dispose();
   }
 
   Future<void> loadPreferences() async {
@@ -60,77 +60,67 @@ class _SettingsPageState extends State<SettingsPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: const Color.fromRGBO(44, 44, 44, 1),
       appBar: AppBar(
         backgroundColor: Colors.yellow,
         title: Text('Settings', style: TextStyle(fontSize: fontSize)),
       ),
-      body: Container(
-        decoration: const BoxDecoration(
-          borderRadius: BorderRadius.all(Radius.circular(20)),
-          gradient: SweepGradient(
-            colors: [
-              Colors.yellow,
-              Colors.white,
-              Colors.black26,
-            ],
-          ),
-        ),
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text('Dark Mode', style: TextStyle(fontSize: fontSize)),
-                  Switch(
-                    value: isDarkMode,
-                    activeColor: Colors.black,
-                    onChanged: (value) {
-                      setState(() {
-                        isDarkMode = value;
-                        widget.updateTheme(isDarkMode);
-                      });
-                      saveThemePreference(value);
-                    },
-                  ),
-                ],
-              ),
-              const SizedBox(height: 20),
-              Text('Font Size: ${fontSize.toStringAsFixed(1)}',
-                  style: TextStyle(fontSize: fontSize)),
-              Slider(
-                value: fontSize,
-                activeColor: Colors.black,
-                min: 12.0,
-                max: 24.0,
-                label: fontSize.toString(),
-                onChanged: (value) {
-                  setState(() {
-                    fontSize = value;
-                    widget.updateFontSize(fontSize);
-                  });
-                  saveFontSizePreference(value);
-                },
-              ),
-              const SizedBox(height: 20),
-              Text('Language', style: TextStyle(fontSize: fontSize)),
-              DropdownButton(
-                value: language, // Set the current language as the value
-                items: items.map<DropdownMenuItem<String>>((item) {
-                  return DropdownMenuItem<String>(
-                      value: item, child: Text(item));
-                }).toList(),
-                onChanged: (value) {
-                  setState(() {
-                    language = value!;
-                  });
-                  saveLanguagePreference(value!);
-                },
-              ),
-            ],
-          ),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text('Dark Mode', style: TextStyle(fontSize: fontSize,color: Colors.yellow)),
+                Switch(
+                  value: isDarkMode,
+                  activeColor: Colors.black,
+                  onChanged: (value) {
+                    setState(() {
+                      isDarkMode = value;
+                      widget.updateTheme(isDarkMode);
+                    });
+                    saveThemePreference(value);
+                  },
+                ),
+              ],
+            ),
+            const SizedBox(height: 20),
+            Text('Font Size: ${fontSize.toStringAsFixed(1)}',
+                style: TextStyle(fontSize: fontSize,color: Colors.yellow)),
+            Slider(
+              value: fontSize,
+              activeColor: Colors.black,
+              min: 12.0,
+              max: 24.0,
+              label: fontSize.toString(),
+              onChanged: (value) {
+                setState(() {
+                  fontSize = value;
+                  widget.updateFontSize(fontSize);
+                });
+                saveFontSizePreference(value);
+              },
+            ),
+            const SizedBox(height: 20),
+            Text('Language', style: TextStyle(fontSize: fontSize,color: Colors.yellow)),
+            DropdownButton(
+              dropdownColor: Colors.black,
+              value: language, // Set the current language as the value
+              items: items.map<DropdownMenuItem<String>>((item) {
+                return DropdownMenuItem<String>(
+                    value: item, child: Text(item,style: const TextStyle(color: Colors.yellow),));
+              }).toList(),
+              onChanged: (value) {
+                setState(() {
+                  language = value!;
+                });
+                saveLanguagePreference(value!);
+              },
+            ),
+          ],
         ),
       ),
     );

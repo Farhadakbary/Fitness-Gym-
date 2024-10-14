@@ -15,7 +15,7 @@ class _WorkoutPageState extends State<WorkoutPage> {
       'Dumbbell Exercise',
       'Pull-Up Exercise',
       'Bicep Exercise',
-      'Tricep Exercise',
+      'Triceps Exercise',
     ],
     'Legs': [
       'Squat',
@@ -35,7 +35,11 @@ class _WorkoutPageState extends State<WorkoutPage> {
       'Stretching Exercises',
       'Basic Yoga',
     ],
-    'Second': ['Chest Press', 'Upper Chest', 'Bicep', 'Tricep']
+    'Second': [
+      'Chest Press',
+      'Upper Chest',
+      'Bicep',
+      'Triceps']
   };
 
   final Map<String, String> categoryImages = {
@@ -51,7 +55,7 @@ class _WorkoutPageState extends State<WorkoutPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.yellow.shade100,
+      backgroundColor: const Color.fromRGBO(44, 44, 44, 1),
       appBar: AppBar(
         title: const Text('Training Programs'),
         backgroundColor: Colors.yellow,
@@ -77,11 +81,11 @@ class _WorkoutPageState extends State<WorkoutPage> {
               },
               child: Container(
                 decoration: BoxDecoration(
-                  color: Colors.grey,
+                  color: Colors.yellow.shade300,
                   borderRadius: BorderRadius.circular(15),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.grey.shade400,
+                      color: Colors.yellow.shade100,
                       blurRadius: 5,
                       offset: const Offset(2, 2),
                     ),
@@ -92,8 +96,8 @@ class _WorkoutPageState extends State<WorkoutPage> {
                   children: [
                     Image.asset(
                       imagePath,
-                      width: 100,
-                      height: 100,
+                      // width: 100,
+                      // height: 100,
                       fit: BoxFit.cover,
                     ),
                     const SizedBox(height: 10),
@@ -102,7 +106,7 @@ class _WorkoutPageState extends State<WorkoutPage> {
                       style: const TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
-                        color: Colors.black87,
+                        color: Colors.black,
                       ),
                     ),
                   ],
