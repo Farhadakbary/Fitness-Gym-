@@ -9,7 +9,7 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'Add_Member.dart';
 import 'database_helper.dart';
 import 'person.dart';
-
+import 'package:shared_preferences/shared_preferences.dart';
 class Dashboard extends StatefulWidget {
   final ValueChanged<bool> onThemeChanged;
   final bool isDarkMode;
@@ -41,10 +41,56 @@ class _DashboardState extends State<Dashboard> {
     'images/desc3.jpg',
   ];
 
+  String language = 'English';
+
+  final Map<String, Map<String, String>> translations = {
+    'English': {
+      'unic_gym': 'UNIC GYM',
+      'all_members': 'All Members',
+      'favorites': 'Favorites',
+      'programs': 'Programs',
+      'reports': 'Reports',
+      'settings': 'Settings',
+      'about': 'About',
+      'total_registered': 'Total Registered',
+      're_registered_within_10_days': 'Re-registered within 10 days',
+      'not_re_registered': 'Not Re-registered',
+      'membership_duration_distribution': 'Membership Duration Distribution',
+      'no_records_found': 'No records found.',
+    },
+    'Dari': {
+      'unic_gym': 'یونیک جیم',
+      'all_members': 'تمام اعضا',
+      'favorites': 'مورد علاقه‌ها',
+      'programs': 'برنامه‌ها',
+      'reports': 'گزارش‌ها',
+      'settings': 'تنظیمات',
+      'about': 'درباره',
+      'total_registered': 'کل ثبت‌نام شده',
+      're_registered_within_10_days': 'ده روز مانده',
+      'not_re_registered': 'دوباره ثبت‌نام نشده',
+      'membership_duration_distribution': 'توزیع مدت عضویت',
+      'no_records_found': 'هیچ کس ثبت نام نشد.',
+      'One Month': 'یک ماهه',
+      'Three Months': 'سه ماهه',
+      'Six Months': 'شیش ماهه',
+      'One Year': 'یک ساله',
+    },
+  };
+
   @override
   void initState() {
     super.initState();
     fetchData();
+    loadLanguage(); // Load language on initialization
+  }
+
+  // Method to load language preference
+  Future<void> loadLanguage() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      language = prefs.getString('language') ?? 'English';
+    });
   }
 
   Future<void> fetchData() async {
@@ -123,115 +169,152 @@ class _DashboardState extends State<Dashboard> {
 
   @override
   Widget build(BuildContext context) {
+    // Retrieve translated strings
+    final t = translations[language]!;
+
     return Scaffold(
       backgroundColor: const Color.fromRGBO(44, 44, 44, 1),
       drawer: Drawer(
         backgroundColor: Colors.yellow.shade100,
         child: Column(
           children: <Widget>[
-            const UserAccountsDrawerHeader(
+            UserAccountsDrawerHeader(
               accountName: Text(
-                'UNIC GYM',
+                t['unic_gym']!,
                 style:
-                    TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
               ),
               accountEmail: null,
-              currentAccountPicture: CircleAvatar(
+              currentAccountPicture: const CircleAvatar(
                 backgroundColor: Colors.white,
                 child: Text(
                   'U',
                   style: TextStyle(fontSize: 40.0, color: Colors.purple),
                 ),
               ),
-              decoration: BoxDecoration(
+              decoration: const BoxDecoration(
                   image: DecorationImage(
                       image: AssetImage('images/desc.jpg'), fit: BoxFit.cover)),
             ),
             ListTile(
               leading: const Icon(Icons.home, color: Colors.black),
-              title: const Text('All Members',
-                  style: TextStyle(color: Colors.black)),
+              title: Text(
+                t['all_members']!,
+                style: const TextStyle(color: Colors.black),
+              ),
               trailing:
-                  const Icon(Icons.navigate_next_rounded, color: Colors.black),
+              const Icon(Icons.navigate_next_rounded, color: Colors.black),
               onTap: () {
                 Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => const AllMember()))
-                    .then((_) => fetchData());
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => const AllMember()))
+                    .then((_) {
+                  fetchData();
+                  loadLanguage(); // Reload language in case it changed
+                });
               },
             ),
             ListTile(
               leading: const Icon(Icons.favorite, color: Colors.black),
-              title: const Text('Favorites',
-                  style: TextStyle(color: Colors.black)),
+              title: Text(
+                t['favorites']!,
+                style: const TextStyle(color: Colors.black),
+              ),
               trailing:
-                  const Icon(Icons.navigate_next_rounded, color: Colors.black),
+              const Icon(Icons.navigate_next_rounded, color: Colors.black),
               onTap: () {
                 Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => const Favorite()))
-                    .then((_) => fetchData());
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => const Favorite()))
+                    .then((_) {
+                  fetchData();
+                  loadLanguage();
+                });
               },
             ),
             ListTile(
               leading: const Icon(Icons.fitness_center, color: Colors.black),
-              title:
-                  const Text('Programs', style: TextStyle(color: Colors.black)),
+              title: Text(
+                t['programs']!,
+                style: const TextStyle(color: Colors.black),
+              ),
               trailing:
-                  const Icon(Icons.navigate_next_rounded, color: Colors.black),
+              const Icon(Icons.navigate_next_rounded, color: Colors.black),
               onTap: () {
                 Navigator.push(
                     context,
                     MaterialPageRoute(
-                        builder: (context) => const WorkoutPage()));
+                        builder: (context) => const WorkoutPage())).then((_) {
+                  loadLanguage();
+                });
               },
             ),
             ListTile(
               leading: const Icon(Icons.report, color: Colors.black),
-              title:
-                  const Text('Reports', style: TextStyle(color: Colors.black)),
+              title: Text(
+                t['reports']!,
+                style: const TextStyle(color: Colors.black),
+              ),
               trailing:
-                  const Icon(Icons.navigate_next_rounded, color: Colors.black),
+              const Icon(Icons.navigate_next_rounded, color: Colors.black),
               onTap: () {
                 Navigator.push(
                     context,
                     MaterialPageRoute(
-                        builder: (context) => const ReportPage()));
+                        builder: (context) => const ReportPage())).then((_) {
+                  loadLanguage();
+                });
               },
             ),
             ListTile(
               leading: const Icon(Icons.settings, color: Colors.black),
-              title:
-                  const Text('Settings', style: TextStyle(color: Colors.black)),
+              title: Text(
+                t['settings']!,
+                style: const TextStyle(color: Colors.black),
+              ),
               trailing:
-                  const Icon(Icons.navigate_next_rounded, color: Colors.black),
+              const Icon(Icons.navigate_next_rounded, color: Colors.black),
               onTap: () {
                 Navigator.push(
                     context,
                     MaterialPageRoute(
                         builder: (context) => SettingsPage(
-                             updateTheme: widget.onThemeChanged,
-                              updateFontSize: (fontSize) {},
-                            ))).then((_) => fetchData());
+                          updateTheme: widget.onThemeChanged,
+                          updateFontSize: (fontSize) {}, currentLanguage: AppLanguage.english, updateLanguage: (AppLanguage ) {  },
+                        )))
+                    .then((_) {
+                  fetchData();
+                  loadLanguage(); // Reload language after settings
+                });
               },
             ),
             ListTile(
               leading: const Icon(Icons.info_rounded, color: Colors.black),
-              title: const Text('About', style: TextStyle(color: Colors.black)),
+              title: Text(
+                t['about']!,
+                style: const TextStyle(color: Colors.black),
+              ),
               trailing:
-                  const Icon(Icons.navigate_next_rounded, color: Colors.black),
+              const Icon(Icons.navigate_next_rounded, color: Colors.black),
               onTap: () {
                 Navigator.push(context,
-                    MaterialPageRoute(builder: (context) =>  AboutPage()));
+                    MaterialPageRoute(builder: (context) => AboutPage())).then((_) {
+                  loadLanguage();
+                });
               },
             ),
           ],
         ),
       ),
       appBar: AppBar(
-        title: const Text('UNIC GYM'),
+        title: Text(
+          t['unic_gym']!,
+          style: const TextStyle(
+            color: Colors.black,
+          ),
+        ),
         backgroundColor: Colors.yellow,
       ),
       body: SingleChildScrollView(
@@ -247,8 +330,12 @@ class _DashboardState extends State<Dashboard> {
                   autoPlay: true,
                   enlargeCenterPage: true,
                   aspectRatio: 16 / 9,
+                  animateToClosest: true,
+                  enableInfiniteScroll: true,
+                  pageSnapping: true,
                   autoPlayInterval: const Duration(seconds: 3),
                   viewportFraction: 0.8,
+                  autoPlayCurve: Curves.decelerate,
                 ),
                 items: imagePaths.map((imagePath) {
                   return Builder(
@@ -263,15 +350,18 @@ class _DashboardState extends State<Dashboard> {
                 children: [
                   Expanded(
                     child: buildStatCard(
-                      'Total Registered',
+                      t['total_registered']!,
                       '$totalRegistered',
                       Colors.yellow.shade600,
                     ),
                   ),
                   const SizedBox(width: 10),
                   Expanded(
-                    child: buildStatCard('Re-registered within 10 days',
-                        '$reRegisteredWithin10Days', Colors.yellow.shade600),
+                    child: buildStatCard(
+                      t['re_registered_within_10_days']!,
+                      '$reRegisteredWithin10Days',
+                      Colors.yellow.shade600,
+                    ),
                   ),
                 ],
               ),
@@ -279,16 +369,19 @@ class _DashboardState extends State<Dashboard> {
               Row(
                 children: [
                   Expanded(
-                    child: buildStatCard('Not Re-registered',
-                        '$notReRegistered', Colors.yellow.shade600),
+                    child: buildStatCard(
+                      t['not_re_registered']!,
+                      '$notReRegistered',
+                      Colors.yellow.shade600,
+                    ),
                   ),
                 ],
               ),
               const SizedBox(height: 20),
               // Membership Duration Distribution
-              const Text(
-                'Membership Duration Distribution',
-                style: TextStyle(
+              Text(
+                t['membership_duration_distribution']!,
+                style: const TextStyle(
                   fontSize: 24,
                   fontWeight: FontWeight.bold,
                   color: Colors.white,
@@ -306,7 +399,7 @@ class _DashboardState extends State<Dashboard> {
                     ),
                     child: ListTile(
                       title: Text(
-                        entry.key,
+                        t[entry.key] ?? entry.key,
                         style: const TextStyle(
                           fontSize: 18,
                           color: Colors.black,
@@ -336,7 +429,10 @@ class _DashboardState extends State<Dashboard> {
             MaterialPageRoute(
               builder: (context) => const AddMember(),
             ),
-          ).then((_) => fetchData());
+          ).then((_) {
+            fetchData();
+            loadLanguage(); // Reload language after adding a member
+          });
         },
         backgroundColor: Colors.yellow,
         child: const Icon(Icons.add),

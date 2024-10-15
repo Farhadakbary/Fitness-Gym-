@@ -13,7 +13,13 @@ class AllMember extends StatefulWidget {
   State<AllMember> createState() => _AllMemberState();
 }
 
-enum SortOption { name, registrationDate }
+// Updated SortOption enum with additional sorting criteria
+enum SortOption {
+  name,
+  registrationDate,
+  feeAmount,      // New option for sorting by fee amount
+  duration        // New option for sorting by duration
+}
 
 class _AllMemberState extends State<AllMember> {
   final DatabaseHelper _dbHelper = DatabaseHelper();
@@ -42,18 +48,40 @@ class _AllMemberState extends State<AllMember> {
       return fullName.contains(_searchQuery.toLowerCase());
     }).toList();
 
-    if (_currentSortOption == SortOption.name) {
-      _filteredPersons.sort((a, b) {
-        final nameA = '${a.firstName} ${a.lastName}'.toLowerCase();
-        final nameB = '${b.firstName} ${b.lastName}'.toLowerCase();
-        return nameA.compareTo(nameB);
-      });
-    } else if (_currentSortOption == SortOption.registrationDate) {
-      _filteredPersons.sort((a, b) {
-        DateTime dateA = DateFormat('yyyy-MM-dd').parse(a.startDate);
-        DateTime dateB = DateFormat('yyyy-MM-dd').parse(b.startDate);
-        return dateA.compareTo(dateB);
-      });
+    switch (_currentSortOption) {
+      case SortOption.name:
+        _filteredPersons.sort((a, b) {
+          final nameA = '${a.firstName} ${a.lastName}'.toLowerCase();
+          final nameB = '${b.firstName} ${b.lastName}'.toLowerCase();
+          return nameA.compareTo(nameB);
+        });
+        break;
+
+      case SortOption.registrationDate:
+        _filteredPersons.sort((a, b) {
+          DateTime dateA = DateFormat('yyyy-MM-dd').parse(a.startDate);
+          DateTime dateB = DateFormat('yyyy-MM-dd').parse(b.startDate);
+          return dateA.compareTo(dateB);
+        });
+        break;
+
+      case SortOption.feeAmount:
+        _filteredPersons.sort((a, b) {
+          // Assuming 'feeAmount' is a numeric field in Person
+          double feeA = a.fee ?? 0.0;
+          double feeB = b.fee ?? 0.0;
+          return feeB.compareTo(feeA); // Descending order
+        });
+        break;
+
+      case SortOption.duration:
+        _filteredPersons.sort((a, b) {
+          // Assuming 'duration' is stored in months as a string
+          int durationA = int.tryParse(a.duration) ?? 0;
+          int durationB = int.tryParse(b.duration) ?? 0;
+          return durationA.compareTo(durationB); // Ascending order
+        });
+        break;
     }
 
     setState(() {});
@@ -154,6 +182,14 @@ class _AllMemberState extends State<AllMember> {
                 value: SortOption.registrationDate,
                 child: Text('Sort by Registration Date'),
               ),
+              const PopupMenuItem<SortOption>(
+                value: SortOption.feeAmount,
+                child: Text('Sort by Fee Amount'), // New sorting option
+              ),
+              const PopupMenuItem<SortOption>(
+                value: SortOption.duration,
+                child: Text('Sort by Duration'), // New sorting option
+              ),
             ],
             tooltip: 'Sort Members',
           ),
@@ -180,109 +216,109 @@ class _AllMemberState extends State<AllMember> {
       ),
       body: _filteredPersons.isEmpty
           ? const Center(
-              child: Text(
-                'No members found.',
-                style: TextStyle(color: Colors.yellow, fontSize: 18),
-              ),
-            )
+        child: Text(
+          'No members found.',
+          style: TextStyle(color: Colors.yellow, fontSize: 18),
+        ),
+      )
           : ListView.builder(
-              itemCount: _filteredPersons.length,
-              itemExtent: 80,
-              itemBuilder: (context, index) {
-                final person = _filteredPersons[index];
-                bool isExpired = _isExpired(person.startDate, person.duration);
+        itemCount: _filteredPersons.length,
+        itemExtent: 80,
+        itemBuilder: (context, index) {
+          final person = _filteredPersons[index];
+          bool isExpired = _isExpired(person.startDate, person.duration);
 
-                return GestureDetector(
-                  onTap: () {
-                    _editPerson(person);
-                  },
-                  child: Card(
-                    color: Colors.yellow.shade300,
-                    margin:
-                        const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
-                    child: ListTile(
-                      leading: person.imagePath != null
-                          ? CircleAvatar(
-                              backgroundImage:
-                                  FileImage(File(person.imagePath!)),
-                              radius: 25,
-                              backgroundColor: Colors.grey.shade800,
-                            )
-                          : const CircleAvatar(
-                              radius: 25,
-                              backgroundColor: Colors.yellow,
-                              child: Icon(
-                                Icons.person,
-                                size: 30,
-                                color: Colors.black,
-                              ),
-                            ),
-                      title: Text(
-                        '${person.firstName} ${person.lastName}',
-                        style: const TextStyle(
-                          color: Colors.black,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      trailing: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          IconButton(
-                            icon: Icon(
-                              person.isFavorite
-                                  ? Icons.favorite
-                                  : Icons.favorite_border,
-                              color:
-                                  person.isFavorite ? Colors.red : Colors.black,
-                            ),
-                            onPressed: () async {
-                              await _toggleFavorite(person);
-                            },
-                          ),
-                          IconButton(
-                            icon: const Icon(Icons.delete, color: Colors.red),
-                            onPressed: () {
-                              showDialog(
-                                context: context,
-                                builder: (ctx) => AlertDialog(
-                                  title: const Text('Confirm Deletion'),
-                                  content: const Text(
-                                      'Are you sure you want to delete this person?',
-                                      style: TextStyle(fontSize: 20)),
-                                  actions: [
-                                    TextButton(
-                                      onPressed: () {
-                                        Navigator.of(ctx).pop();
-                                      },
-                                      child: const Text(
-                                        'No',
-                                        style: TextStyle(
-                                            color: Colors.red, fontSize: 20),
-                                      ),
-                                    ),
-                                    TextButton(
-                                      onPressed: () {
-                                        _deletePerson(person.id!);
-                                        Navigator.of(ctx).pop();
-                                      },
-                                      child: const Text(
-                                        'Yes',
-                                        style: TextStyle(
-                                            color: Colors.green, fontSize: 20),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              );
-                            },
-                          ),
-                        ],
-                      ),
-                    ),
+          return GestureDetector(
+            onTap: () {
+              _editPerson(person);
+            },
+            child: Card(
+              color: Colors.yellow.shade300,
+              margin:
+              const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
+              child: ListTile(
+                leading: person.imagePath != null
+                    ? CircleAvatar(
+                  backgroundImage:
+                  FileImage(File(person.imagePath!)),
+                  radius: 25,
+                  backgroundColor: Colors.grey.shade800,
+                )
+                    : const CircleAvatar(
+                  radius: 25,
+                  backgroundColor: Colors.yellow,
+                  child: Icon(
+                    Icons.person,
+                    size: 30,
+                    color: Colors.black,
                   ),
-                );
-              },
+                ),
+                title: Text(
+                  '${person.firstName} ${person.lastName}',
+                  style: const TextStyle(
+                    color: Colors.black,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                trailing: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    IconButton(
+                      icon: Icon(
+                        person.isFavorite
+                            ? Icons.favorite
+                            : Icons.favorite_border,
+                        color:
+                        person.isFavorite ? Colors.red : Colors.black,
+                      ),
+                      onPressed: () async {
+                        await _toggleFavorite(person);
+                      },
+                    ),
+                    IconButton(
+                      icon: const Icon(Icons.delete, color: Colors.red),
+                      onPressed: () {
+                        showDialog(
+                          context: context,
+                          builder: (ctx) => AlertDialog(
+                            title: const Text('Confirm Deletion'),
+                            content: const Text(
+                                'Are you sure you want to delete this person?',
+                                style: TextStyle(fontSize: 20)),
+                            actions: [
+                              TextButton(
+                                onPressed: () {
+                                  Navigator.of(ctx).pop();
+                                },
+                                child: const Text(
+                                  'No',
+                                  style: TextStyle(
+                                      color: Colors.red, fontSize: 20),
+                                ),
+                              ),
+                              TextButton(
+                                onPressed: () {
+                                  _deletePerson(person.id!);
+                                  Navigator.of(ctx).pop();
+                                },
+                                child: const Text(
+                                  'Yes',
+                                  style: TextStyle(
+                                      color: Colors.green, fontSize: 20),
+                                ),
+                              ),
+                            ],
+                          ),
+                        );
+                      },
+                    ),
+                  ],
+                ),
+              ),
             ),
+          );
+        },
+      ),
     );
   }
 }

@@ -94,11 +94,13 @@ class _WorkoutPageState extends State<WorkoutPage> {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Image.asset(
-                      imagePath,
-                      // width: 100,
-                      // height: 100,
-                      fit: BoxFit.cover,
+                    Expanded(
+                      child: Image.asset(
+                        imagePath,
+                        width: 110,
+                        height: 110,
+                        fit: BoxFit.cover,
+                      ),
                     ),
                     const SizedBox(height: 10),
                     Text(
@@ -117,14 +119,14 @@ class _WorkoutPageState extends State<WorkoutPage> {
         ),
       ),
       floatingActionButton: FloatingActionButton(
-        backgroundColor: Colors.black,
+        backgroundColor: Colors.yellow,
         onPressed: () {
           _showAddCategoryDialog(context);
         },
         tooltip: 'Add New Category',
         child: const Icon(
           Icons.add,
-          color: Colors.white,
+          color: Colors.black,
         ),
       ),
     );
@@ -150,7 +152,7 @@ class _WorkoutPageState extends State<WorkoutPage> {
                   Center(
                     child: Container(
                       width: 50,
-                      height: 5,
+                      height: 10,
                       decoration: BoxDecoration(
                         color: Colors.grey.shade300,
                         borderRadius: BorderRadius.circular(10),

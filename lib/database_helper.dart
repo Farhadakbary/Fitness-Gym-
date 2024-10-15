@@ -6,6 +6,7 @@ import 'package:flutter/foundation.dart';
 import 'package:intl/intl.dart';
 
 class DatabaseHelper {
+
   static final DatabaseHelper _instance = DatabaseHelper._internal();
 
   factory DatabaseHelper() => _instance;
@@ -51,7 +52,7 @@ class DatabaseHelper {
 
   FutureOr<void> _onCreate(Database db, int version) async {
     try {
-      await db.execute('''  
+      await db.execute('''
         CREATE TABLE $_tableName(
           id INTEGER PRIMARY KEY AUTOINCREMENT,
           firstName TEXT NOT NULL,
@@ -74,7 +75,7 @@ class DatabaseHelper {
   FutureOr<void> _onUpgrade(Database db, int oldVersion, int newVersion) async {
     if (oldVersion < 2) {
       try {
-        await db.execute('''  
+        await db.execute('''
           ALTER TABLE $_tableName ADD COLUMN isFavorite INTEGER NOT NULL DEFAULT 0
         ''');
         debugPrint('Added "isFavorite" column to "$_tableName" table');
@@ -85,7 +86,7 @@ class DatabaseHelper {
 
     if (oldVersion < 3) {
       try {
-        await db.execute('''  
+        await db.execute('''
           ALTER TABLE $_tableName ADD COLUMN fee REAL NOT NULL DEFAULT 1000
         ''');
         debugPrint('Added "fee" column to "$_tableName" table');
@@ -94,7 +95,7 @@ class DatabaseHelper {
       }
 
       try {
-        await db.execute('''  
+        await db.execute('''
           ALTER TABLE $_tableName ADD COLUMN startDate TEXT NOT NULL DEFAULT ''
         ''');
         debugPrint('Added "startDate" column to "$_tableName" table');
@@ -103,7 +104,7 @@ class DatabaseHelper {
       }
 
       try {
-        await db.execute('''  
+        await db.execute('''
           ALTER TABLE $_tableName ADD COLUMN duration TEXT NOT NULL DEFAULT 'One Month'
         ''');
         debugPrint('Added "duration" column to "$_tableName" table');
@@ -114,12 +115,6 @@ class DatabaseHelper {
   }
 
   Future<int> insertPerson(Person person) async {
-    // Validate input
-    if (person.firstName.isEmpty || person.lastName.isEmpty || person.age < 0) {
-      debugPrint('Invalid person data');
-      return -1; // Indicates failure
-    }
-
     try {
       final db = await database;
       return await db.insert(
@@ -137,6 +132,7 @@ class DatabaseHelper {
     try {
       final db = await database;
       final List<Map<String, dynamic>> maps = await db.query(_tableName);
+
       return List.generate(maps.length, (i) {
         return Person.fromMap(maps[i]);
       });
@@ -154,38 +150,13 @@ class DatabaseHelper {
         where: 'isFavorite = ?',
         whereArgs: [1],
       );
+
       return List.generate(maps.length, (i) {
         return Person.fromMap(maps[i]);
       });
     } catch (e) {
       debugPrint('Error retrieving favorite persons: $e');
       return [];
-    }
-  }
-
-  Future<int> toggleFavorite(Person person) async {
-    person.isFavorite = !person.isFavorite;
-    return await updatePerson(person);
-  }
-
-  Future<int> updatePerson(Person person) async {
-    // Validate input
-    if (person.id == null || person.firstName.isEmpty || person.lastName.isEmpty || person.age < 0) {
-      debugPrint('Invalid person data');
-      return -1; // Indicates failure
-    }
-
-    try {
-      final db = await database;
-      return await db.update(
-        _tableName,
-        person.toMap(),
-        where: 'id = ?',
-        whereArgs: [person.id],
-      );
-    } catch (e) {
-      debugPrint('Error updating person: $e');
-      return -1; // Indicates failure
     }
   }
 
@@ -203,6 +174,48 @@ class DatabaseHelper {
     }
   }
 
+  Future<int> updatePerson(Person person) async {
+    try {
+      final db = await database;
+      return await db.update(
+        _tableName,
+        person.toMap(),
+        where: 'id = ?',
+        whereArgs: [person.id],
+      );
+    } catch (e) {
+      debugPrint('Error updating person: $e');
+      return -1; // Indicates failure
+    }
+  }
+
+  Future<int> toggleFavorite(Person person) async {
+    person.isFavorite = !person.isFavorite;
+    return await updatePerson(person);
+  }
+
+  Future<void> close() async {
+    final db = await database;
+    db.close();
+  }
+
+  Future<List<Person>> getPersonsByDuration(String duration) async {
+    try {
+      final db = await database;
+      final List<Map<String, dynamic>> maps = await db.query(
+        _tableName,
+        where: 'duration = ?',
+        whereArgs: [duration],
+      );
+
+      return List.generate(maps.length, (i) {
+        return Person.fromMap(maps[i]);
+      });
+    } catch (e) {
+      debugPrint('Error retrieving persons by duration: $e');
+      return [];
+    }
+  }
   Future<List<Person>> getExpiredPersons() async {
     try {
       final db = await database;
@@ -215,8 +228,7 @@ class DatabaseHelper {
         Person person = Person.fromMap(map);
         DateTime startDate = DateFormat('yyyy-MM-dd').parse(person.startDate);
         int durationMonths = durationToMonths(person.duration);
-        DateTime endDate = DateTime(
-            startDate.year, startDate.month + durationMonths, startDate.day);
+        DateTime endDate = DateTime(startDate.year, startDate.month + durationMonths, startDate.day);
 
         if (endDate.isBefore(today)) {
           expiredPersons.add(person);
@@ -243,8 +255,7 @@ class DatabaseHelper {
         Person person = Person.fromMap(map);
         DateTime startDate = DateFormat('yyyy-MM-dd').parse(person.startDate);
         int durationMonths = durationToMonths(person.duration);
-        DateTime endDate = DateTime(
-            startDate.year, startDate.month + durationMonths, startDate.day);
+        DateTime endDate = DateTime(startDate.year, startDate.month + durationMonths, startDate.day);
 
         if (endDate.isAfter(today) && endDate.isBefore(targetDate)) {
           expiringPersons.add(person);
@@ -271,45 +282,5 @@ class DatabaseHelper {
       default:
         return 1;
     }
-  }
-
-  Future<List<Person>> getPersonsByDuration(String duration) async {
-    try {
-      final db = await database;
-      final List<Map<String, dynamic>> maps = await db.query(
-        _tableName,
-        where: 'duration = ?',
-        whereArgs: [duration],
-      );
-      debugPrint('Found ${maps.length} persons for duration $duration');
-      return List.generate(maps.length, (i) {
-        return Person.fromMap(maps[i]);
-      });
-    } catch (e) {
-      debugPrint('Error retrieving persons by duration: $e');
-      return [];
-    }
-  }
-  Future<List<Person>> getPersonsByFeePercentage(double percentage, {bool isAbove = true}) async {
-    try {
-      final db = await database;
-      final String condition = isAbove ? '> ?' : '< ?';
-      final List<Map<String, dynamic>> maps = await db.query(
-        _tableName,
-        where: 'fee $condition',
-        whereArgs: [percentage],
-      );
-      return List.generate(maps.length, (i) {
-        return Person.fromMap(maps[i]);
-      });
-    } catch (e) {
-      debugPrint('Error retrieving persons by fee percentage: $e');
-      return [];
-    }
-  }
-
-  Future<void> close() async {
-    final db = await database;
-    await db.close();
   }
 }
