@@ -72,24 +72,24 @@ class _AddMemberState extends State<AddMember> {
   }
 
   void _updateFeeRange(String? duration) {
-    double minFee = 1000;
+    double minFee = 0;
     double maxFee = 1000;
 
     switch (duration) {
       case 'One Month':
-        minFee = 1000;
+        minFee = 0;
         maxFee = 1000;
         break;
       case 'Three Months':
-        minFee = 2700;
+        minFee = 2000;
         maxFee = 3000;
         break;
       case 'Six Months':
-        minFee = 5000;
+        minFee = 4500;
         maxFee = 6000;
         break;
       case 'One Year':
-        minFee = 10000;
+        minFee = 9000;
         maxFee = 11000;
         break;
       default:
@@ -150,11 +150,11 @@ class _AddMemberState extends State<AddMember> {
       case 'One Month':
         return '1000 AFN';
       case 'Three Months':
-        return '2700 - 3000 AFN';
+        return '2000 - 3000 AFN';
       case 'Six Months':
-        return '5000 - 6000 AFN';
+        return '4500 - 6000 AFN';
       case 'One Year':
-        return '10000 - 11000 AFN';
+        return '9000 - 11000 AFN';
       default:
         return '1000 AFN';
     }
@@ -312,19 +312,19 @@ class _AddMemberState extends State<AddMember> {
 
                         switch (_selectedDuration) {
                           case 'One Month':
-                            minFee = 1000;
+                            minFee = 0;
                             maxFee = 1000;
                             break;
                           case 'Three Months':
-                            minFee = 2700;
+                            minFee = 2000;
                             maxFee = 3000;
                             break;
                           case 'Six Months':
-                            minFee = 5000;
+                            minFee = 4500;
                             maxFee = 6000;
                             break;
                           case 'One Year':
-                            minFee = 10000;
+                            minFee = 9000;
                             maxFee = 11000;
                             break;
                           default:

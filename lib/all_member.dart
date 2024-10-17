@@ -13,12 +13,11 @@ class AllMember extends StatefulWidget {
   State<AllMember> createState() => _AllMemberState();
 }
 
-// Updated SortOption enum with additional sorting criteria
 enum SortOption {
   name,
   registrationDate,
-  feeAmount,      // New option for sorting by fee amount
-  duration        // New option for sorting by duration
+  feeAmount,
+  duration
 }
 
 class _AllMemberState extends State<AllMember> {
