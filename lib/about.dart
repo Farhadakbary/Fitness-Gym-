@@ -106,20 +106,4 @@ There are many variations of passages of Lorem Ipsum available,
     );
   }
 
-  void _showFullImage(BuildContext context, String imagePath) {
-    showDialog(
-      context: context,
-      builder: (context) {
-        return Dialog(
-          child: SizedBox(
-            width: double.infinity,
-            child: Image.asset(
-              imagePath,
-              fit: BoxFit.cover,
-            ),
-          ),
-        );
-      },
-    );
-  }
 }

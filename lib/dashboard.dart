@@ -85,7 +85,6 @@ class _DashboardState extends State<Dashboard> {
     loadLanguage(); // Load language on initialization
   }
 
-  // Method to load language preference
   Future<void> loadLanguage() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     setState(() {
@@ -169,7 +168,7 @@ class _DashboardState extends State<Dashboard> {
 
   @override
   Widget build(BuildContext context) {
-    // Retrieve translated strings
+
     final t = translations[language]!;
 
     return Scaffold(

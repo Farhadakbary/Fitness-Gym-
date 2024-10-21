@@ -66,16 +66,14 @@ class _AllMemberState extends State<AllMember> {
 
       case SortOption.feeAmount:
         _filteredPersons.sort((a, b) {
-          // Assuming 'feeAmount' is a numeric field in Person
           double feeA = a.fee ?? 0.0;
           double feeB = b.fee ?? 0.0;
-          return feeB.compareTo(feeA); // Descending order
+          return feeB.compareTo(feeA);
         });
         break;
 
       case SortOption.duration:
         _filteredPersons.sort((a, b) {
-          // Assuming 'duration' is stored in months as a string
           int durationA = int.tryParse(a.duration) ?? 0;
           int durationB = int.tryParse(b.duration) ?? 0;
           return durationA.compareTo(durationB); // Ascending order

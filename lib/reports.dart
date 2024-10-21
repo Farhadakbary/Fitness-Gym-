@@ -1,13 +1,10 @@
-// report_page.dart
-
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:clup_management/database_helper.dart';
 import 'package:clup_management/person.dart';
 import 'package:intl/intl.dart';
-import 'dart:ui' as ui; // Alias dart:ui as ui
+import 'dart:ui' as ui;
 
-// Define the language enum
 enum AppLanguage { english, persian, dari }
 
 class ReportPage extends StatefulWidget {
@@ -20,10 +17,8 @@ class ReportPage extends StatefulWidget {
 class _ReportPageState extends State<ReportPage> with TickerProviderStateMixin {
   final DatabaseHelper _dbHelper = DatabaseHelper();
 
-  // Variable to hold the current language
   AppLanguage _currentLanguage = AppLanguage.english;
 
-  // Localization maps
   final Map<String, Map<String, String>> _localizedStrings = {
     'en': {
       'reports': 'Reports',
@@ -55,7 +50,6 @@ class _ReportPageState extends State<ReportPage> with TickerProviderStateMixin {
     },
   };
 
-  // Animation controllers for each card
   late AnimationController _allMembersController;
   late AnimationController _expiringMembersController;
   late AnimationController _expiredMembersController;
@@ -68,7 +62,6 @@ class _ReportPageState extends State<ReportPage> with TickerProviderStateMixin {
   void initState() {
     super.initState();
 
-    // Initialize animation controllers
     _allMembersController = AnimationController(
       duration: const Duration(seconds: 2),
       vsync: this,
@@ -107,7 +100,6 @@ class _ReportPageState extends State<ReportPage> with TickerProviderStateMixin {
 
   @override
   void dispose() {
-    // Dispose animation controllers
     _allMembersController.dispose();
     _expiringMembersController.dispose();
     _expiredMembersController.dispose();
@@ -118,12 +110,10 @@ class _ReportPageState extends State<ReportPage> with TickerProviderStateMixin {
     super.dispose();
   }
 
-  // Function to get the appropriate string based on the current language
   String _getString(String key) {
     return _localizedStrings[_currentLanguage == AppLanguage.english ? 'en' : 'fa']![key] ?? '';
   }
 
-  // Function to toggle the language
   void _toggleLanguage() {
     setState(() {
       _currentLanguage =
@@ -133,7 +123,6 @@ class _ReportPageState extends State<ReportPage> with TickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
-    // Determine text direction based on the current language
     ui.TextDirection textDirection =
     _currentLanguage == AppLanguage.english ? ui.TextDirection.ltr : ui.TextDirection.rtl;
 

@@ -1,9 +1,8 @@
-// settings_page.dart
 
 import 'package:clup_management/reports.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'main.dart'; // برای دسترسی به AppLanguage
+import 'main.dart';
 
 class SettingsPage extends StatefulWidget {
   final Function(bool) updateTheme;
