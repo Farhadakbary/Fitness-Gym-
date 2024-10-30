@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:clup_management/database_helper.dart';
 import 'package:clup_management/person.dart';
 import 'package:intl/intl.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:ui' as ui;
 
 enum AppLanguage { english, persian, dari }
@@ -16,8 +17,8 @@ class ReportPage extends StatefulWidget {
 
 class _ReportPageState extends State<ReportPage> with TickerProviderStateMixin {
   final DatabaseHelper _dbHelper = DatabaseHelper();
-
   AppLanguage _currentLanguage = AppLanguage.english;
+  double _fontSize = 12.0;
 
   final Map<String, Map<String, String>> _localizedStrings = {
     'en': {
@@ -32,7 +33,7 @@ class _ReportPageState extends State<ReportPage> with TickerProviderStateMixin {
       'noRecordsFound': 'No records found.',
       'close': 'Close',
       'daysRemaining': 'days remaining',
-      'language': 'Language', // Added for settings
+      'language': 'Language',
     },
     'fa': {
       'reports': 'گزارش‌ها',
@@ -46,7 +47,7 @@ class _ReportPageState extends State<ReportPage> with TickerProviderStateMixin {
       'noRecordsFound': 'رکوردی یافت نشد.',
       'close': 'بستن',
       'daysRemaining': 'روز باقی‌مانده',
-      'language': 'زبان', // Added for settings
+      'language': 'زبان',
     },
   };
 
@@ -61,7 +62,7 @@ class _ReportPageState extends State<ReportPage> with TickerProviderStateMixin {
   @override
   void initState() {
     super.initState();
-
+    _loadPreferences();
     _allMembersController = AnimationController(
       duration: const Duration(seconds: 2),
       vsync: this,
@@ -98,6 +99,24 @@ class _ReportPageState extends State<ReportPage> with TickerProviderStateMixin {
     )..repeat(reverse: true);
   }
 
+  Future<void> _loadPreferences() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      _fontSize = prefs.getDouble('fontSize') ?? 12.0;
+      String lang = prefs.getString('language') ?? 'English';
+      _currentLanguage = lang == 'English' ? AppLanguage.english : AppLanguage.dari;
+    });
+  }
+  String _getString(String key) {
+    return _localizedStrings[_currentLanguage == AppLanguage.english ? 'en' : 'fa']![key] ?? '';
+  }
+
+  void _toggleLanguage() {
+    setState(() {
+      _currentLanguage =
+      _currentLanguage == AppLanguage.english ? AppLanguage.persian : AppLanguage.english;
+    });
+  }
   @override
   void dispose() {
     _allMembersController.dispose();
@@ -110,20 +129,10 @@ class _ReportPageState extends State<ReportPage> with TickerProviderStateMixin {
     super.dispose();
   }
 
-  String _getString(String key) {
-    return _localizedStrings[_currentLanguage == AppLanguage.english ? 'en' : 'fa']![key] ?? '';
-  }
-
-  void _toggleLanguage() {
-    setState(() {
-      _currentLanguage =
-      _currentLanguage == AppLanguage.english ? AppLanguage.persian : AppLanguage.english;
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
-    ui.TextDirection textDirection =
+
+      ui.TextDirection textDirection =
     _currentLanguage == AppLanguage.english ? ui.TextDirection.ltr : ui.TextDirection.rtl;
 
     return Directionality(
@@ -133,15 +142,7 @@ class _ReportPageState extends State<ReportPage> with TickerProviderStateMixin {
         appBar: AppBar(
           title: Text(_getString('reports')),
           backgroundColor: Colors.yellow,
-          actions: [
-            IconButton(
-              icon: Icon(_currentLanguage == AppLanguage.english
-                  ? Icons.language
-                  : Icons.translate),
-              onPressed: _toggleLanguage,
-              tooltip: _currentLanguage == AppLanguage.english ? 'فارسی' : 'English',
-            ),
-          ],
+
         ),
         body: Padding(
           padding: const EdgeInsets.all(20.0),

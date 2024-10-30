@@ -21,7 +21,8 @@ class _AddMemberState extends State<AddMember> {
   final TextEditingController _lastNameController = TextEditingController();
   final TextEditingController _ageController = TextEditingController();
   final TextEditingController _feeController =
-      TextEditingController(text: '1000');
+  TextEditingController(text: '1000');
+  final TextEditingController _phoneController = TextEditingController(); // New controller for phone
 
   File? _imageFile;
 
@@ -41,13 +42,14 @@ class _AddMemberState extends State<AddMember> {
     _lastNameController.dispose();
     _ageController.dispose();
     _feeController.dispose();
+    _phoneController.dispose(); // Dispose of the new controller
     super.dispose();
   }
 
   Future<void> _pickImage() async {
     final ImagePicker picker = ImagePicker();
     final XFile? pickedImage =
-        await picker.pickImage(source: ImageSource.camera);
+    await picker.pickImage(source: ImageSource.camera);
 
     if (pickedImage != null) {
       setState(() {
@@ -56,7 +58,6 @@ class _AddMemberState extends State<AddMember> {
     }
   }
 
-  // Pick a date
   Future<void> _pickDate() async {
     final DateTime? picked = await showDatePicker(
       context: context,
@@ -119,7 +120,7 @@ class _AddMemberState extends State<AddMember> {
         fee: double.parse(_feeController.text),
         startDate: DateFormat('yyyy-MM-dd').format(_selectedDate!),
         duration: _selectedDuration ?? 'One Month',
-        
+        phone: _phoneController.text, // Add phone to the new Person
       );
 
       await _dbHelper.insertPerson(newPerson);
@@ -128,6 +129,7 @@ class _AddMemberState extends State<AddMember> {
       _lastNameController.clear();
       _ageController.clear();
       _feeController.text = '1000';
+      _phoneController.clear(); // Clear phone field
       setState(() {
         _imageFile = null;
         _selectedDate = null;
@@ -257,6 +259,25 @@ class _AddMemberState extends State<AddMember> {
                       },
                     ),
                     const SizedBox(height: 15),
+                    // Phone Number
+                    TextFormField(
+                      controller: _phoneController,
+                      decoration: const InputDecoration(
+                        labelText: 'Phone Number',
+                        border: OutlineInputBorder(),
+                        labelStyle: TextStyle(
+                            fontWeight: FontWeight.bold, color: Colors.black),
+                        suffixIcon: Icon(Icons.phone),
+                      ),
+                      keyboardType: TextInputType.phone,
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Please enter phone number';
+                        }
+                        return null;
+                      },
+                    ),
+                    const SizedBox(height: 15),
                     // Duration Dropdown
                     DropdownButtonFormField<String>(
                       decoration: const InputDecoration(
@@ -268,9 +289,9 @@ class _AddMemberState extends State<AddMember> {
                       value: _selectedDuration,
                       items: _durations
                           .map((duration) => DropdownMenuItem(
-                                value: duration,
-                                child: Text(duration),
-                              ))
+                        value: duration,
+                        child: Text(duration),
+                      ))
                           .toList(),
                       onChanged: (value) {
                         setState(() {
@@ -358,7 +379,7 @@ class _AddMemberState extends State<AddMember> {
                               text: _selectedDate == null
                                   ? ''
                                   : DateFormat('yyyy-MM-dd')
-                                      .format(_selectedDate!),
+                                  .format(_selectedDate!),
                             ),
                             validator: (value) {
                               if (_selectedDate == null) {
@@ -385,24 +406,24 @@ class _AddMemberState extends State<AddMember> {
                       children: [
                         _imageFile != null
                             ? Image.file(
-                                _imageFile!,
-                                width: 100,
-                                height: 100,
-                                fit: BoxFit.cover,
-                              )
+                          _imageFile!,
+                          width: 100,
+                          height: 100,
+                          fit: BoxFit.cover,
+                        )
                             : Container(
-                                width: 100,
-                                height: 100,
-                                decoration: BoxDecoration(
-                                  color: Colors.grey[300],
-                                  borderRadius: BorderRadius.circular(8),
-                                ),
-                                child: const Icon(
-                                  Icons.person,
-                                  size: 50,
-                                  color: Colors.black54,
-                                ),
-                              ),
+                          width: 100,
+                          height: 100,
+                          decoration: BoxDecoration(
+                            color: Colors.grey[300],
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: const Icon(
+                            Icons.person,
+                            size: 50,
+                            color: Colors.black54,
+                          ),
+                        ),
                         const SizedBox(width: 10),
                         ElevatedButton(
                           onPressed: _pickImage,

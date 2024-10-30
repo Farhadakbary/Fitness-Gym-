@@ -1,6 +1,6 @@
 import 'package:clup_management/Settings.dart';
 import 'package:clup_management/about.dart';
-import 'package:clup_management/all_member.dart';
+import 'package:clup_management/all_member.dart' hide AppLanguage;
 import 'package:clup_management/favorite.dart';
 import 'package:clup_management/reports.dart';
 import 'package:clup_management/workout.dart';
@@ -417,6 +417,9 @@ class _DashboardState extends State<Dashboard> {
                   );
                 }).toList(),
               ),
+             const SizedBox(
+                height: 50,
+              )
             ],
           ),
         ),

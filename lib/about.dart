@@ -34,7 +34,10 @@ class _AboutPageState extends State<AboutPage> {
                 enlargeCenterPage: true,
                 aspectRatio: 16 / 9,
                 autoPlayInterval: const Duration(seconds: 3),
-                viewportFraction: 0.8,
+                viewportFraction: 1,
+                animateToClosest: true,
+
+                autoPlayCurve: Curves.easeInCubic
               ),
               items: imagePaths.map((imagePath) {
                 return Builder(

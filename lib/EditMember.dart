@@ -137,7 +137,7 @@ class _EditMemberState extends State<EditMember> {
         isFavorite: widget.person.isFavorite,
         fee: double.parse(_feeController.text),
         startDate: DateFormat('yyyy-MM-dd').format(_selectedDate!),
-        duration: _selectedDuration ?? 'One Month',
+        duration: _selectedDuration ?? 'One Month', phone: '',
       );
 
       int result = await _dbHelper.updatePerson(updatedPerson);

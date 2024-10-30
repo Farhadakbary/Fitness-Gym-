@@ -9,6 +9,7 @@ class Person {
   final double fee;
   final String startDate;
   final String? imagePath;
+  final String phone;
   bool isFavorite;
 
   Person({
@@ -21,6 +22,7 @@ class Person {
     required this.startDate,
     this.imagePath,
     this.isFavorite = false,
+    required this.phone
   });
 
   Map<String, dynamic> toMap() {
@@ -34,6 +36,7 @@ class Person {
       'startDate': startDate,
       'imagePath': imagePath,
       'isFavorite': isFavorite ? 1 : 0,
+      'phone': phone
     };
   }
 
@@ -47,7 +50,7 @@ class Person {
       fee: map['fee'],
       startDate: map['startDate'],
       imagePath: map['imagePath'],
-      isFavorite: map['isFavorite'] == 1,
+      isFavorite: map['isFavorite'] == 1, phone: '',
     );
   }
 

@@ -1,10 +1,14 @@
 import 'dart:io';
+import 'package:clup_management/reports.dart';
 import 'package:flutter/material.dart';
 import 'package:clup_management/database_helper.dart';
 import 'package:clup_management/person.dart';
 import 'package:clup_management/favorite.dart';
 import 'package:clup_management/EditMember.dart';
 import 'package:intl/intl.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
+enum AppLanguage { english, persian, dari }
 
 class AllMember extends StatefulWidget {
   const AllMember({super.key});
@@ -26,6 +30,27 @@ class _AllMemberState extends State<AllMember> {
   List<Person> _filteredPersons = [];
   String _searchQuery = '';
   SortOption _currentSortOption = SortOption.name;
+  AppLanguage _currentLanguage = AppLanguage.english;
+  double _fontSize = 12.0;
+
+  final Map<String, Map<String, String>> _localizedStrings = {
+    'en': {
+      'All Members': 'All Members',
+      'Search by name': 'Search by name',
+      'Sort by name': 'Sort by name',
+      'Sort by Registration Date': 'Sort by Registration Date',
+      'Sort by Fee Amount': 'Sort by Fee Amount',
+      'Sort by Duration': 'Sort by Duration',
+    },
+    'fa': {
+      'All Members': 'تمام ممبر ها',
+      'Search by name': 'حستحو به اساس نام',
+      'Sort by name': 'تنظیم به اساس نام',
+      'Sort by Registration Date': 'تنظیم به اساس تاریخ ثبت نام',
+      'Sort by Fee Amount': 'تنظیم به اساس مقدار فیس',
+      'Sort by Duration': 'تنظیم به اساس مدت زمان',
+    },
+  };
 
   @override
   void initState() {
@@ -34,10 +59,14 @@ class _AllMemberState extends State<AllMember> {
   }
 
   Future<void> _loadPersons() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
     List<Person> persons = await _dbHelper.getAllPersons();
     setState(() {
       _allPersons = persons;
       _applyFilters();
+      _fontSize = prefs.getDouble('fontSize') ?? 12.0;
+      String lang = prefs.getString('language') ?? 'English';
+      _currentLanguage = lang == 'English' ? AppLanguage.english : AppLanguage.dari;
     });
   }
 
@@ -84,6 +113,21 @@ class _AllMemberState extends State<AllMember> {
     setState(() {});
   }
 
+  void _toggleLanguage() {
+    setState(() {
+      _currentLanguage = _currentLanguage == AppLanguage.english
+          ? AppLanguage.persian
+          : AppLanguage.english;
+      // Save the new language preference
+      _saveLanguagePreference(_currentLanguage);
+    });
+  }
+
+  Future<void> _saveLanguagePreference(AppLanguage value) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setString('language', value == AppLanguage.english ? 'English' : 'Dari');
+  }
+
   Future<void> _deletePerson(int id) async {
     await _dbHelper.deletePerson(id);
     _loadPersons();
@@ -97,9 +141,8 @@ class _AllMemberState extends State<AllMember> {
     _loadPersons();
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-          content: Text(person.isFavorite
-              ? 'Added to favorites'
-              : 'Removed from favorites')),
+        content: Text(person.isFavorite ? 'Added to favorites' : 'Removed from favorites'),
+      ),
     );
   }
 
@@ -148,12 +191,22 @@ class _AllMemberState extends State<AllMember> {
     }
   }
 
+  // Method to update font size
+  void updateFontSize(double newSize) {
+    setState(() {
+      _fontSize = newSize;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color.fromRGBO(44, 44, 44, 1),
       appBar: AppBar(
-        title: const Text('All Members'),
+        title: Text(
+          _localizedStrings[_currentLanguage == AppLanguage.english ? 'en' : 'fa']!['All Members']!,
+          style: TextStyle(fontSize: _fontSize),
+        ),
         centerTitle: true,
         backgroundColor: Colors.yellow,
         actions: [
@@ -181,11 +234,11 @@ class _AllMemberState extends State<AllMember> {
               ),
               const PopupMenuItem<SortOption>(
                 value: SortOption.feeAmount,
-                child: Text('Sort by Fee Amount'), // New sorting option
+                child: Text('Sort by Fee Amount'),
               ),
               const PopupMenuItem<SortOption>(
                 value: SortOption.duration,
-                child: Text('Sort by Duration'), // New sorting option
+                child: Text('Sort by Duration'),
               ),
             ],
             tooltip: 'Sort Members',
@@ -198,7 +251,7 @@ class _AllMemberState extends State<AllMember> {
             child: TextField(
               onChanged: _onSearchChanged,
               decoration: InputDecoration(
-                hintText: 'Search by name...',
+                hintText: _localizedStrings[_currentLanguage == AppLanguage.english ? 'en' : 'fa']!['Search by name']!,
                 prefixIcon: const Icon(Icons.search, color: Colors.black),
                 filled: true,
                 fillColor: Colors.white,
@@ -212,10 +265,10 @@ class _AllMemberState extends State<AllMember> {
         ),
       ),
       body: _filteredPersons.isEmpty
-          ? const Center(
+          ? Center(
         child: Text(
-          'No members found.',
-          style: TextStyle(color: Colors.yellow, fontSize: 18),
+          _localizedStrings[_currentLanguage == AppLanguage.english ? 'en' : 'fa']!['No members found.']!,
+          style: TextStyle(color: Colors.yellow, fontSize: _fontSize),
         ),
       )
           : ListView.builder(
@@ -231,13 +284,11 @@ class _AllMemberState extends State<AllMember> {
             },
             child: Card(
               color: Colors.yellow.shade300,
-              margin:
-              const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
+              margin: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
               child: ListTile(
                 leading: person.imagePath != null
                     ? CircleAvatar(
-                  backgroundImage:
-                  FileImage(File(person.imagePath!)),
+                  backgroundImage: FileImage(File(person.imagePath!)),
                   radius: 25,
                   backgroundColor: Colors.grey.shade800,
                 )
@@ -252,9 +303,10 @@ class _AllMemberState extends State<AllMember> {
                 ),
                 title: Text(
                   '${person.firstName} ${person.lastName}',
-                  style: const TextStyle(
+                  style: TextStyle(
                     color: Colors.black,
                     fontWeight: FontWeight.bold,
+                    fontSize: _fontSize,
                   ),
                 ),
                 trailing: Row(
@@ -262,11 +314,8 @@ class _AllMemberState extends State<AllMember> {
                   children: [
                     IconButton(
                       icon: Icon(
-                        person.isFavorite
-                            ? Icons.favorite
-                            : Icons.favorite_border,
-                        color:
-                        person.isFavorite ? Colors.red : Colors.black,
+                        person.isFavorite ? Icons.favorite : Icons.favorite_border,
+                        color: person.isFavorite ? Colors.red : Colors.black,
                       ),
                       onPressed: () async {
                         await _toggleFavorite(person);
@@ -279,9 +328,7 @@ class _AllMemberState extends State<AllMember> {
                           context: context,
                           builder: (ctx) => AlertDialog(
                             title: const Text('Confirm Deletion'),
-                            content: const Text(
-                                'Are you sure you want to delete this person?',
-                                style: TextStyle(fontSize: 20)),
+                            content: const Text('Are you sure you want to delete this person?', style: TextStyle(fontSize: 20)),
                             actions: [
                               TextButton(
                                 onPressed: () {
@@ -289,8 +336,7 @@ class _AllMemberState extends State<AllMember> {
                                 },
                                 child: const Text(
                                   'No',
-                                  style: TextStyle(
-                                      color: Colors.red, fontSize: 20),
+                                  style: TextStyle(color: Colors.red, fontSize: 20),
                                 ),
                               ),
                               TextButton(
@@ -300,8 +346,7 @@ class _AllMemberState extends State<AllMember> {
                                 },
                                 child: const Text(
                                   'Yes',
-                                  style: TextStyle(
-                                      color: Colors.green, fontSize: 20),
+                                  style: TextStyle(color: Colors.green, fontSize: 20),
                                 ),
                               ),
                             ],

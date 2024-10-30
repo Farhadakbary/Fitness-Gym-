@@ -1,3 +1,4 @@
+import 'dart:async';
 
 import 'package:clup_management/reports.dart';
 import 'package:flutter/material.dart';
@@ -76,8 +77,6 @@ class _SettingsPageState extends State<SettingsPage> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.setString('language', value == AppLanguage.english ? 'English' : 'Dari');
   }
-
-  // تابع برای دریافت رشته‌های مناسب بر اساس زبان جاری
   String getString(String key) {
     final langCode = language == AppLanguage.english ? 'en' : 'fa';
     final translationsForLang = translations[langCode];
@@ -86,7 +85,6 @@ class _SettingsPageState extends State<SettingsPage> {
 
   @override
   Widget build(BuildContext context) {
-    // تعیین جهت متنی بر اساس زبان
     TextDirection textDirection =
     language == AppLanguage.english ? TextDirection.ltr : TextDirection.rtl;
 
