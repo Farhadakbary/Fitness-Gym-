@@ -1,5 +1,4 @@
 import 'dart:io';
-import 'package:clup_management/reports.dart';
 import 'package:flutter/material.dart';
 import 'package:clup_management/database_helper.dart';
 import 'package:clup_management/person.dart';
@@ -17,12 +16,7 @@ class AllMember extends StatefulWidget {
   State<AllMember> createState() => _AllMemberState();
 }
 
-enum SortOption {
-  name,
-  registrationDate,
-  feeAmount,
-  duration
-}
+enum SortOption { name, registrationDate, feeAmount, duration }
 
 class _AllMemberState extends State<AllMember> {
   final DatabaseHelper _dbHelper = DatabaseHelper();
@@ -51,7 +45,6 @@ class _AllMemberState extends State<AllMember> {
       'Sort by Duration': 'تنظیم به اساس مدت زمان',
     },
   };
-
   @override
   void initState() {
     super.initState();
@@ -66,7 +59,8 @@ class _AllMemberState extends State<AllMember> {
       _applyFilters();
       _fontSize = prefs.getDouble('fontSize') ?? 12.0;
       String lang = prefs.getString('language') ?? 'English';
-      _currentLanguage = lang == 'English' ? AppLanguage.english : AppLanguage.dari;
+      _currentLanguage =
+          lang == 'English' ? AppLanguage.english : AppLanguage.dari;
     });
   }
 
@@ -118,14 +112,20 @@ class _AllMemberState extends State<AllMember> {
       _currentLanguage = _currentLanguage == AppLanguage.english
           ? AppLanguage.persian
           : AppLanguage.english;
-      // Save the new language preference
       _saveLanguagePreference(_currentLanguage);
     });
   }
 
   Future<void> _saveLanguagePreference(AppLanguage value) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.setString('language', value == AppLanguage.english ? 'English' : 'Dari');
+    await prefs.setString(
+        'language', value == AppLanguage.english ? "English" : "Dari");
+  }
+
+  void updateFontSize(double newFont) {
+    setState(() {
+      _fontSize = newFont;
+    });
   }
 
   Future<void> _deletePerson(int id) async {
@@ -141,8 +141,9 @@ class _AllMemberState extends State<AllMember> {
     _loadPersons();
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text(person.isFavorite ? 'Added to favorites' : 'Removed from favorites'),
-      ),
+          content: Text(person.isFavorite
+              ? 'Added to favorites'
+              : 'Removed from favorites')),
     );
   }
 
@@ -191,21 +192,15 @@ class _AllMemberState extends State<AllMember> {
     }
   }
 
-  // Method to update font size
-  void updateFontSize(double newSize) {
-    setState(() {
-      _fontSize = newSize;
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color.fromRGBO(44, 44, 44, 1),
       appBar: AppBar(
         title: Text(
-          _localizedStrings[_currentLanguage == AppLanguage.english ? 'en' : 'fa']!['All Members']!,
-          style: TextStyle(fontSize: _fontSize),
+          _localizedStrings[_currentLanguage == AppLanguage.english
+              ? 'en'
+              : 'fa']!['All Members']!,
         ),
         centerTitle: true,
         backgroundColor: Colors.yellow,
@@ -224,21 +219,33 @@ class _AllMemberState extends State<AllMember> {
             icon: const Icon(Icons.sort, color: Colors.black),
             onSelected: _onSortSelected,
             itemBuilder: (BuildContext context) => <PopupMenuEntry<SortOption>>[
-              const PopupMenuItem<SortOption>(
+              PopupMenuItem<SortOption>(
                 value: SortOption.name,
-                child: Text('Sort by Name'),
+                child: Text(_localizedStrings[
+                    _currentLanguage == AppLanguage.english
+                        ? 'en'
+                        : 'fa']!['Sort by name']!),
               ),
-              const PopupMenuItem<SortOption>(
+              PopupMenuItem<SortOption>(
                 value: SortOption.registrationDate,
-                child: Text('Sort by Registration Date'),
+                child: Text(_localizedStrings[
+                    _currentLanguage == AppLanguage.english
+                        ? 'en'
+                        : 'fa']!['Sort by Registration Date']!),
               ),
-              const PopupMenuItem<SortOption>(
+              PopupMenuItem<SortOption>(
                 value: SortOption.feeAmount,
-                child: Text('Sort by Fee Amount'),
+                child: Text(_localizedStrings[
+                    _currentLanguage == AppLanguage.english
+                        ? 'en'
+                        : 'fa']!['Sort by Fee Amount']!), // New sorting option
               ),
-              const PopupMenuItem<SortOption>(
+              PopupMenuItem<SortOption>(
                 value: SortOption.duration,
-                child: Text('Sort by Duration'),
+                child: Text(_localizedStrings[
+                    _currentLanguage == AppLanguage.english
+                        ? 'en'
+                        : 'fa']!['Sort by Duration']!), // New sorting option
               ),
             ],
             tooltip: 'Sort Members',
@@ -251,7 +258,7 @@ class _AllMemberState extends State<AllMember> {
             child: TextField(
               onChanged: _onSearchChanged,
               decoration: InputDecoration(
-                hintText: _localizedStrings[_currentLanguage == AppLanguage.english ? 'en' : 'fa']!['Search by name']!,
+                hintText: 'Search by name...',
                 prefixIcon: const Icon(Icons.search, color: Colors.black),
                 filled: true,
                 fillColor: Colors.white,
@@ -265,102 +272,110 @@ class _AllMemberState extends State<AllMember> {
         ),
       ),
       body: _filteredPersons.isEmpty
-          ? Center(
-        child: Text(
-          _localizedStrings[_currentLanguage == AppLanguage.english ? 'en' : 'fa']!['No members found.']!,
-          style: TextStyle(color: Colors.yellow, fontSize: _fontSize),
-        ),
-      )
-          : ListView.builder(
-        itemCount: _filteredPersons.length,
-        itemExtent: 80,
-        itemBuilder: (context, index) {
-          final person = _filteredPersons[index];
-          bool isExpired = _isExpired(person.startDate, person.duration);
-
-          return GestureDetector(
-            onTap: () {
-              _editPerson(person);
-            },
-            child: Card(
-              color: Colors.yellow.shade300,
-              margin: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
-              child: ListTile(
-                leading: person.imagePath != null
-                    ? CircleAvatar(
-                  backgroundImage: FileImage(File(person.imagePath!)),
-                  radius: 25,
-                  backgroundColor: Colors.grey.shade800,
-                )
-                    : const CircleAvatar(
-                  radius: 25,
-                  backgroundColor: Colors.yellow,
-                  child: Icon(
-                    Icons.person,
-                    size: 30,
-                    color: Colors.black,
-                  ),
-                ),
-                title: Text(
-                  '${person.firstName} ${person.lastName}',
-                  style: TextStyle(
-                    color: Colors.black,
-                    fontWeight: FontWeight.bold,
-                    fontSize: _fontSize,
-                  ),
-                ),
-                trailing: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    IconButton(
-                      icon: Icon(
-                        person.isFavorite ? Icons.favorite : Icons.favorite_border,
-                        color: person.isFavorite ? Colors.red : Colors.black,
-                      ),
-                      onPressed: () async {
-                        await _toggleFavorite(person);
-                      },
-                    ),
-                    IconButton(
-                      icon: const Icon(Icons.delete, color: Colors.red),
-                      onPressed: () {
-                        showDialog(
-                          context: context,
-                          builder: (ctx) => AlertDialog(
-                            title: const Text('Confirm Deletion'),
-                            content: const Text('Are you sure you want to delete this person?', style: TextStyle(fontSize: 20)),
-                            actions: [
-                              TextButton(
-                                onPressed: () {
-                                  Navigator.of(ctx).pop();
-                                },
-                                child: const Text(
-                                  'No',
-                                  style: TextStyle(color: Colors.red, fontSize: 20),
-                                ),
-                              ),
-                              TextButton(
-                                onPressed: () {
-                                  _deletePerson(person.id!);
-                                  Navigator.of(ctx).pop();
-                                },
-                                child: const Text(
-                                  'Yes',
-                                  style: TextStyle(color: Colors.green, fontSize: 20),
-                                ),
-                              ),
-                            ],
-                          ),
-                        );
-                      },
-                    ),
-                  ],
-                ),
+          ? const Center(
+              child: Text(
+                'No members found.',
+                style: TextStyle(color: Colors.yellow, fontSize: 18),
               ),
+            )
+          : ListView.builder(
+              itemCount: _filteredPersons.length,
+              itemExtent: 80,
+              itemBuilder: (context, index) {
+                final person = _filteredPersons[index];
+                bool isExpired = _isExpired(person.startDate, person.duration);
+
+                return GestureDetector(
+                  onTap: () {
+                    _editPerson(person);
+                  },
+                  child: Card(
+                    color: Colors.yellow.shade300,
+                    margin:
+                        const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
+                    child: ListTile(
+                      leading: person.imagePath != null
+                          ? CircleAvatar(
+                              backgroundImage:
+                                  FileImage(File(person.imagePath!)),
+                              radius: 25,
+                              backgroundColor: Colors.grey.shade800,
+                            )
+                          : const CircleAvatar(
+                              radius: 25,
+                              backgroundColor: Colors.yellow,
+                              child: Icon(
+                                Icons.person,
+                                size: 30,
+                                color: Colors.black,
+                              ),
+                            ),
+                      title: Text(
+                        '${person.firstName} ${person.lastName}',
+                        style: const TextStyle(
+                          color: Colors.black,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      trailing: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          IconButton(
+                            icon: Icon(
+                              person.isFavorite
+                                  ? Icons.favorite
+                                  : Icons.favorite_border,
+                              color:
+                                  person.isFavorite ? Colors.red : Colors.black,
+                            ),
+                            onPressed: () async {
+                              await _toggleFavorite(person);
+                            },
+                          ),
+                          IconButton(
+                            icon: const Icon(Icons.delete, color: Colors.red),
+                            onPressed: () {
+                              showDialog(
+                                context: context,
+                                builder: (ctx) => AlertDialog(
+                                  title: const Text('Confirm Deletion'),
+                                  content: const Text(
+                                      'Are you sure you want to delete this person?',
+                                      style: TextStyle(fontSize: 20)),
+                                  actions: [
+                                    TextButton(
+                                      onPressed: () {
+                                        Navigator.of(ctx).pop();
+                                      },
+                                      child: const Text(
+                                        'No',
+                                        style: TextStyle(
+                                            color: Colors.red, fontSize: 20),
+                                      ),
+                                    ),
+                                    TextButton(
+                                      onPressed: () {
+                                        _deletePerson(person.id!);
+                                        Navigator.of(ctx).pop();
+                                      },
+                                      child: const Text(
+                                        'Yes',
+                                        style: TextStyle(
+                                            color: Colors.green, fontSize: 20),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              );
+                            },
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                );
+              },
             ),
-          );
-        },
-      ),
     );
   }
 }
