@@ -1,4 +1,4 @@
-import 'package:clup_management/Settings.dart';
+import 'package:clup_management/settings.dart';
 import 'package:clup_management/about.dart';
 import 'package:clup_management/all_member.dart' hide AppLanguage;
 import 'package:clup_management/favorite.dart';

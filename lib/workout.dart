@@ -97,8 +97,8 @@ class _WorkoutPageState extends State<WorkoutPage> {
                     Expanded(
                       child: Image.asset(
                         imagePath,
-                        width: 110,
-                        height: 110,
+                        // width: 110,
+                        // height: 110,
                         fit: BoxFit.cover,
                       ),
                     ),
@@ -399,7 +399,7 @@ class _WorkoutPageState extends State<WorkoutPage> {
                               _pickImage(setState);
                             },
                             icon: const Icon(Icons.photo_library),
-                            label: const Text('Select Image'),
+                            label: const Text('Image'),
                             style: ElevatedButton.styleFrom(
                               backgroundColor: Colors.yellow,
                             ),
